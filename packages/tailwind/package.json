@@ -1,8 +1,8 @@
 {
-  "name": "@repo/tailwind-config",
+  "name": "@repo/tailwind",
   "module": "index.ts",
   "type": "module",
-  "main": "styles.css",
+  "main": "./styles.css",
   "exports": {
     "./styles": "./styles.css"
   },

@@ -1,4 +1,4 @@
-# @repo/tailwind-config
+# tailwind
 
 To install dependencies:
 

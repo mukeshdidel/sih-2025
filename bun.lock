@@ -24,7 +24,7 @@
       "devDependencies": {
         "@repo/db": "*",
         "@repo/eslint-config": "*",
-        "@repo/tailwind-config": "*",
+        "@repo/tailwind": "*",
         "@repo/typescript-config": "*",
         "@types/node": "^22.15.3",
         "@types/react": "19.1.0",
@@ -62,8 +62,8 @@
         "typescript-eslint": "^8.40.0",
       },
     },
-    "packages/tailwind-config": {
-      "name": "@repo/tailwind-config",
+    "packages/tailwind": {
+      "name": "@repo/tailwind",
       "dependencies": {
         "@tailwindcss/postcss": "^4.1.12",
         "postcss": "^8.5.6",
@@ -235,7 +235,7 @@
 
     "@repo/eslint-config": ["@repo/eslint-config@workspace:packages/eslint-config"],
 
-    "@repo/tailwind-config": ["@repo/tailwind-config@workspace:packages/tailwind-config"],
+    "@repo/tailwind": ["@repo/tailwind@workspace:packages/tailwind"],
 
     "@repo/typescript-config": ["@repo/typescript-config@workspace:packages/typescript-config"],
 

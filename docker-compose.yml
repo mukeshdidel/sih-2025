@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: posegres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: sih
+    ports:
+      - "5432:5432"
+
+  sih_web:
+    build:
+      network: host
+      context: ./
+      dockerfile: docker/dev/dockerfile.fe
+
+    environment:
+      - DATABASE_URL=postgres://posegres:password@postgres:5432/sih
+
+    depends_on:
+      - postgres
+
+    ports:
+      - "3000:3000"

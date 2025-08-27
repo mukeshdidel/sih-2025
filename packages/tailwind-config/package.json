@@ -1,0 +1,20 @@
+{
+  "name": "@repo/tailwind-config",
+  "module": "index.ts",
+  "type": "module",
+  "main": "styles.css",
+  "exports": {
+    "./styles": "./styles.css"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.1.12",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.12"
+  }
+}

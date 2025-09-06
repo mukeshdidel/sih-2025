@@ -15,11 +15,11 @@ const Topbar = ({setIsOpen, isOpen}: {setIsOpen: (isOpen: boolean) => void, isOp
                 <div className="text-white cursor-pointer lg:ml-6 p-2 rounded-md hover:bg-gray-700" onClick={() => {setIsOpen(!isOpen)}}>
                     <ThreeLines />
                 </div>
-                <div className="flex items-center justify-start gap-1">
-                    <div className="w-12 h-12 rounded-xl text-green-500 flex justify-center items-center" >
+                <div className="flex items-center justify-start gap-0.5">
+                    <div className="w-10 h-10 rounded-xl text-green-500 flex justify-center items-center" >
                        <Leaf />
                     </div>
-                    <p className={`font-extrabold text-2xl text-green-500`}>
+                    <p className={`font-bold lg:font-extrabold text-xl lg:text-2xl text-green-500`}>
                         App Name
                     </p>
                 </div>              

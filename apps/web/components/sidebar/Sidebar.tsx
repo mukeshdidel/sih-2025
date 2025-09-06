@@ -14,8 +14,8 @@ const Sidebar = ({isOpen, setIsOpen}: {isOpen: boolean, setIsOpen: (isOpen: bool
                 {/* elements */}
                 <div className="flex flex-col mx-4 my-4 gap-2 text-green-500">
                     <Element icon={<Homeicon />} label="Dashboard" href="/dashboard" isOpen={isOpen}  />
-                    <Element icon={<></>} label="Other Page" href="/play" isOpen={isOpen} />
-                    <Element icon={<></>} label="Other Page 2" href="/play" isOpen={isOpen} />
+                    <Element icon={<></>} label="Other Page" href="/" isOpen={isOpen} />
+                    <Element icon={<></>} label="Other Page 2" href="/" isOpen={isOpen} />
                 </div>
             </div>
         </div>

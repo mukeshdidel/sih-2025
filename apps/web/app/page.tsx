@@ -1,6 +1,7 @@
-import React from 'react';
+import Link from 'next/link';
 import Leaf from './icons/Leaf';
 import UserIcon from './icons/UserIcon';
+import Button from '../components/ui/Button';
 
 function App() {
   return (
@@ -21,7 +22,7 @@ function App() {
       </header>
 
       {/* main */}
-      <div className="py-32 flex-1">
+      <div className="flex-1 flex items-center">
         <div className="max-w-3xl mx-auto px-6 text-center">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-light text-white mb-8 leading-tight">
             {/*Ancient Wisdom,*/} Some Quote
@@ -33,12 +34,12 @@ function App() {
             while delivering modern accuracy and precision.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-green-500 text-gray-900 px-8 py-4 rounded-full text-lg font-medium hover:bg-green-400 transition-colors">
-              Get Started Free
-            </button>
-            <button className="border border-green-500 text-green-400 px-8 py-4 rounded-full text-lg font-medium hover:bg-green-500 hover:text-gray-900 transition-colors">
-              Sign In
-            </button>
+            <Link href="auth/signup">
+              <Button variant="primary" size="md" >Get Started Free</Button>
+            </Link>
+            <Link href="auth/signin">
+              <Button variant="secondary" size="md" >Sign In</Button>
+            </Link>
           </div>
         </div>
       </div>

@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
         console.log(1);
         
-        const { name, email, password, userType } = result.data;\
+        const { name, email, password, userType } = result.data;
 
 
 

@@ -16,7 +16,9 @@ export async function POST(req: NextRequest) {
 
         console.log(1);
         
-        const { name, email, password, userType } = result.data;
+        const { name, email, password, userType } = result.data;\
+
+
 
         const existingDoc = await prisma.doctor.findUnique({ where: { email } });
         const existingPatient = await prisma.patient.findUnique({ where: { email } });        
@@ -94,7 +96,7 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
     } catch (error) {
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        return NextResponse.json({ error: "Internal Server Error", details: error }, { status: 500 });
     }
     
 }

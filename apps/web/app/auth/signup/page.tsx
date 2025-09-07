@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Input from "../../../components/ui/Input";
 import Button from "../../../components/ui/Button";
+import {useRouter}from 'next/navigation';
 
 
 
@@ -14,9 +15,29 @@ const page = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        // Handle form submission
+    const router = useRouter();
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        try {
+            e.preventDefault();
+            // Handle form submission
+            const res = await fetch("/api/auth/signup", {
+                method: "POST",
+                body: JSON.stringify({ name, email, password, userType: isDoctor ? "doctor" : "patient" }),
+            })
+            const data = await res.json();
+            console.log(data);
+            
+            if (res.ok) {
+                localStorage.setItem("authToken", data.token);
+                router.push("/dashboard");
+            } else {
+                console.error("Sign up failed:", data.message);
+            }
+            
+        } catch (error) {
+            console.error("Error during sign up:", error);
+        }
     };
 
     return (
@@ -34,10 +55,10 @@ const page = () => {
                         <Input label="Email" type="email" placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
                         <Input label="Password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
                         <button
-                        type="submit"
+                        onClick={handleSubmit}
                         className="w-full bg-green-500 text-gray-900 px-6 py-3 rounded-full text-lg font-medium hover:bg-green-400 transition-colors"
                         >
-                        Sign In
+                        Sign Up
                         </button>
                     </div>
                     <div className="mt-8 text-center">

@@ -51,10 +51,10 @@ model Patient {
   password         String
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
-  gender           Gender
-  dob              DateTime
-  height           Float // in cm
-  weight           Float // in kg
+  gender           Gender?
+  dob              DateTime?
+  height           Float? // in cm
+  weight           Float? // in kg
   dietary_habits   DietaryHabits    @default(VEGETARIAN)
   mealFrequency    Int              @default(3)
   waterIntake      Float            @default(2) // in liters
@@ -92,7 +92,6 @@ model Food {
   FoodVirya         FoodVirya[]
   FoodVipaka        FoodVipaka[]
   FoodDigestibility FoodDigestibility[]
-  cuisineCuisine_id String?
   RecipeIngredient  RecipeIngredient[]
   DietChartRecipe   DietChartRecipe[]
 }
@@ -103,6 +102,52 @@ model Nutrient {
   unit         String
   FoodNutrient FoodNutrient[]
   Rda          Rda[]
+}
+
+model Rasa {
+  rasa_id  String     @id @default(cuid())
+  name     String     @unique
+  FoodRasa FoodRasa[]
+}
+
+model Guna {
+  guna_id  String     @id @default(cuid())
+  name     String     @unique
+  FoodGuna FoodGuna[]
+}
+
+model Dosha {
+  dosha_id     String         @id @default(cuid())
+  name         String         @unique
+  FoodDosha    FoodDosha[]
+  PatientDosha PatientDosha[]
+}
+
+model Virya {
+  virya_id  String      @id @default(cuid())
+  name      String      @unique
+  FoodVirya FoodVirya[]
+}
+
+model Vipaka {
+  vipaka_id  String       @id @default(cuid())
+  name       String       @unique
+  FoodVipaka FoodVipaka[]
+}
+
+model Digestibility {
+  digestibility_id  String              @id @default(cuid())
+  name              String              @unique
+  FoodDigestibility FoodDigestibility[]
+}
+
+model Rda {
+  rda_id      String   @id @default(cuid())
+  nutrient_id String
+  age_group   AgeGroup
+  Nutrient    Nutrient @relation(fields: [nutrient_id], references: [nutrient_id])
+  gender      Gender
+  amount      Float
 }
 
 model FoodNutrient {
@@ -116,12 +161,6 @@ model FoodNutrient {
   @@id([food_id, nutrient_id])
 }
 
-model Rasa {
-  rasa_id  String     @id @default(cuid())
-  name     String     @unique
-  FoodRasa FoodRasa[]
-}
-
 model FoodRasa {
   food_id String
   rasa_id String
@@ -132,12 +171,6 @@ model FoodRasa {
   @@id([food_id, rasa_id])
 }
 
-model Guna {
-  guna_id  String     @id @default(cuid())
-  name     String     @unique
-  FoodGuna FoodGuna[]
-}
-
 model FoodGuna {
   food_id String
   guna_id String
@@ -146,13 +179,6 @@ model FoodGuna {
   guna Guna @relation(fields: [guna_id], references: [guna_id])
 
   @@id([food_id, guna_id])
-}
-
-model Dosha {
-  dosha_id     String         @id @default(cuid())
-  name         String         @unique
-  FoodDosha    FoodDosha[]
-  PatientDosha PatientDosha[]
 }
 
 model FoodDosha {
@@ -175,12 +201,6 @@ model PatientDosha {
   @@id([patient_id, dosha_id])
 }
 
-model Virya {
-  virya_id  String      @id @default(cuid())
-  name      String      @unique
-  FoodVirya FoodVirya[]
-}
-
 model FoodVirya {
   food_id  String
   virya_id String
@@ -191,24 +211,12 @@ model FoodVirya {
   @@id([food_id, virya_id])
 }
 
-model Vipaka {
-  vipaka_id  String       @id @default(cuid())
-  name       String       @unique
-  FoodVipaka FoodVipaka[]
-}
-
 model FoodVipaka {
   food_id   String @id
   vipaka_id String
 
   food   Food   @relation(fields: [food_id], references: [food_id])
   vipaka Vipaka @relation(fields: [vipaka_id], references: [vipaka_id])
-}
-
-model Digestibility {
-  digestibility_id  String              @id @default(cuid())
-  name              String              @unique
-  FoodDigestibility FoodDigestibility[]
 }
 
 model FoodDigestibility {
@@ -231,15 +239,6 @@ enum AgeGroup {
   ADOLESCENT // 12-18 years
   ADULT // 18-65 years
   SENIOR // 65+ years
-}
-
-model Rda {
-  rda_id      String   @id @default(cuid())
-  nutrient_id String
-  age_group   AgeGroup
-  Nutrient    Nutrient @relation(fields: [nutrient_id], references: [nutrient_id])
-  gender      Gender
-  amount      Float
 }
 
 model Recipe {

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Input from "../../../components/ui/Input";
 import Button from "../../../components/ui/Button";
+import { useRouter } from "next/navigation";
 
 
 
@@ -11,6 +12,31 @@ const page = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+    const router = useRouter();
+    
+    const handleSubmit = async (e: React.FormEvent) => {
+        try {
+            e.preventDefault();
+            // Handle form submission
+            const res = await fetch("/api/auth/signin", {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({ email, password }),
+            })
+            const data = await res.json();
+            console.log(data);
+            
+            if (res.ok) {
+                localStorage.setItem("authToken", data.token);
+                router.push("/dashboard");
+            } else {
+                console.error("Sign in failed:", data.message);
+            }
+            
+        } catch (error) {
+            console.error("Error during sign in:", error);
+        }
+    };
 
 
     return (

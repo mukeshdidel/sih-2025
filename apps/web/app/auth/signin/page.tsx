@@ -49,7 +49,7 @@ const page = () => {
                         <Input label="Email" type="email" placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
                         <Input label="Password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
                         <button
-                        type="submit"
+                        onClick={handleSubmit}
                         className="w-full bg-green-500 text-gray-900 px-6 py-3 rounded-full text-lg font-medium hover:bg-green-400 transition-colors"
                         >
                         Sign In

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { loginSchema } from "../../../types/zod";
-import { prisma} from "@repo/db/client"
+import { prisma } from "@repo/db/client";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
@@ -22,46 +22,60 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Email does not exist" }, { status: 404 });
         }
 
-        if(existingDoc){
-
+        if (existingDoc) {
             const isValid = await bcrypt.compare(password, existingDoc.password);
-            if(!isValid){
+            if (!isValid) {
                 return NextResponse.json({ error: "Invalid password" }, { status: 401 });
             }
 
-            const token = jwt.sign({
-                email: existingDoc.email,
-                id: existingDoc.id,
-                userType: "doctor",
-                name: existingDoc.name
-            }, process.env.JWT_SECRET!)
+            const token = jwt.sign(
+                {
+                    email: existingDoc.email,
+                    id: existingDoc.id,
+                    userType: "doctor",
+                    name: existingDoc.name,
+                },
+                process.env.JWT_SECRET!
+            );
 
-            return NextResponse.json({
-                message: "Login successful",
-                token
-            }, {
-                status: 200
-            })
-        } else if(existingPatient){
-            const isValid = await bcrypt.compare(password, existingPatient.password);
-            if(!isValid){
-                return NextResponse.json({ error: "Invalid password" }, { status: 401 });
-            }
-
-            const token = jwt.sign({
-                email: existingPatient.email,
-                id: existingPatient.id,
-                userType: "patient",
-                name: existingPatient.name
-            }, process.env.JWT_SECRET!)
-
-            return NextResponse.json({
-                message: "Login successful",
-                token
-            }, {
-                status: 200
-            })
+            return NextResponse.json(
+                {
+                    message: "Login successful",
+                    token,
+                },
+                {
+                    status: 200,
+                }
+            );
         }
+
+        if (existingPatient) {
+            const isValid = await bcrypt.compare(password, existingPatient.password);
+            if (!isValid) {
+                return NextResponse.json({ error: "Invalid password" }, { status: 401 });
+            }
+
+            const token = jwt.sign(
+                {
+                    email: existingPatient.email,
+                    id: existingPatient.id,
+                    userType: "patient",
+                    name: existingPatient.name,
+                },
+                process.env.JWT_SECRET!
+            );
+
+            return NextResponse.json(
+                {
+                    message: "Login successful",
+                    token,
+                },
+                {
+                    status: 200,
+                }
+            );
+        }
+        return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
     } catch (error) {
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }

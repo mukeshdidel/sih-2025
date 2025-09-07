@@ -16,5 +16,12 @@
   },
   "dependencies": {
     "prisma": "^6.14.0"
-  }
+  },
+  "pipeline": {
+    "...": "..."
+  },
+  "globalEnv": [
+    "DATABASE_URL",
+    "JWT_SECRET"
+  ]
 }

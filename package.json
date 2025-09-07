@@ -8,8 +8,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
     "db:generate": "cd packages/db && npx prisma generate &&  cd ../..",
-    "web:start": "cd apps/web && bun run start",
-    "postinstall": "prisma generate"
+    "web:start": "cd apps/web && bun run start"
   },
   "devDependencies": {
     "prettier": "^3.6.2",

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { loginSchema } from "../../../types/zod";
+import { loginSchema } from "../../../../lib/types/zod";
 import { prisma } from "@repo/db/client";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";

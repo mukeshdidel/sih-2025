@@ -45,33 +45,67 @@ model Doctor {
 }
 
 model Patient {
-  id               String           @id @default(cuid())
-  email            String           @unique
-  name             String?
-  password         String
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
-  gender           Gender?
-  dob              DateTime?
-  height           Float? // in cm
-  weight           Float? // in kg
+  id            String          @id @default(cuid())
+  email         String          @unique
+  name          String?
+  password      String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  DoctorPatient DoctorPatient[]
+}
+
+enum Priority {
+  low
+  medium
+  high
+}
+
+model DoctorPatient {
+  dp_id           String  @id @default(cuid())
+  doctor_id       String
+  patient_id      String
+  isActivePatient Boolean @default(true)
+
+  gender           Gender
+  dob              DateTime
+  height           Float // in cm
+  weight           Float // in kg
   dietary_habits   DietaryHabits    @default(VEGETARIAN)
   mealFrequency    Int              @default(3)
   waterIntake      Float            @default(2) // in liters
   digestionQuality DigestionQuality @default(AVERAGE)
   bowelMovement    BowelMovement    @default(REGULAR)
   PatientDosha     PatientDosha[]
-  DoctorPatient    DoctorPatient[]
+  priority         Priority         @default(medium)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  lastConsultation DateTime?
+  nextConsultation DateTime?
+
+  doctor     Doctor       @relation(fields: [doctor_id], references: [id])
+  patient    Patient      @relation(fields: [patient_id], references: [id])
+  ChcPatient ChcPatient[]
+
+  @@unique([doctor_id, patient_id])
 }
 
-model DoctorPatient {
-  doctor_id  String
-  patient_id String
+model CriticalHealthCondition {
+  chc_id      String       @id @default(cuid())
+  name        String       @unique
+  description String?
+  ChcPatient  ChcPatient[]
+}
 
-  doctor  Doctor  @relation(fields: [doctor_id], references: [id])
-  patient Patient @relation(fields: [patient_id], references: [id])
+model ChcPatient {
+  chc_id    String
+  dp_id     String
+  diagnosed DateTime
+  resolved  DateTime?
 
-  @@id([doctor_id, patient_id])
+  criticalHealthCondition CriticalHealthCondition @relation(fields: [chc_id], references: [chc_id])
+  doctorPatient           DoctorPatient           @relation(fields: [dp_id], references: [dp_id])
+
+  @@id([chc_id, dp_id])
 }
 
 model Cuisine {
@@ -192,13 +226,13 @@ model FoodDosha {
 }
 
 model PatientDosha {
-  patient_id String
-  dosha_id   String
+  pd_id    String
+  dosha_id String
 
-  patient Patient @relation(fields: [patient_id], references: [id])
-  dosha   Dosha   @relation(fields: [dosha_id], references: [dosha_id])
+  dosha         Dosha         @relation(fields: [dosha_id], references: [dosha_id])
+  doctorPatient DoctorPatient @relation(fields: [pd_id], references: [dp_id])
 
-  @@id([patient_id, dosha_id])
+  @@id([pd_id, dosha_id])
 }
 
 model FoodVirya {

@@ -1,8 +1,8 @@
 
-const Input = ({label, type, placeholder, value, onChange}: {label: string, type: string, placeholder: string, value: string, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void}) => {
+const Input = ({label, type, placeholder, value, onChange}: {label: string, type: string, placeholder: string, value: string | number, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void}) => {
   return (
         <div>
-            <label className="block text-gray-400 mb-2" htmlFor={label}>
+            <label className="block text-gray-300 mb-2" htmlFor={label}>
                 {label}
             </label>
             <input

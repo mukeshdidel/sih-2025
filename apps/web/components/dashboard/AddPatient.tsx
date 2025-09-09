@@ -1,52 +1,64 @@
 import { useState } from "react";
 import UserIcon2 from "../../app/icons/UserIcon2";
 import Leaf from "../../app/icons/Leaf";
-import XIcon from "../../app/icons/XIcon";
+// import XIcon from "../../app/icons/XIcon";
 import Input from "../ui/Input";
 import Utensils from "../../app/icons/Utensils";
 import Button from "../ui/Button";
 
 interface Patient {
-    id: string;
-    name: string;
     email: string;
     height: number;
     weight: number;
     age: number;
-    gender: 'Male' | 'Female' | 'Other';
+    gender: 'MALE' | 'FEMALE';
 
-    Dosha: 'Vata' | 'Pitta' | 'Kapha' ;
-    dietaryHabits: 'Vegetarian' | 'Vegan' | 'Non-Vegetarian' | 'Jain' | 'Sattvic';
+    Dosha_ids: ['cmfchx8ep000ccmoqglwagbov' | 'cmfchx8ep000dcmoq3nxf2u44' | 'cmfchx8ep000ecmoqsvbuxc9z']; // vata = 'cmfchx8ep000ccmoqglwagbov' pitta = cmfchx8ep000dcmoq3nxf2u44 kapha = cmfchx8ep000ecmoqsvbuxc9z
+    dietaryHabit: 'VEGETARIAN' | 'VEGAN' | 'NON_VEGETARIAN' | 'EGGITARIAN';
     mealFrequency: number;
-    bowelMovements: 'Regular' | 'Irregular' | 'Constipated' | 'Loose';
-    waterIntake: number; // in liters
+    bowelMovement: 'REGULAR' | 'CONSTIPATED' | 'LOOSE';
+    waterIntake: number;
     digestionQuality: "EXCELLENT" | "GOOD" | "AVERAGE" | "POOR";
-    currentSymptoms: string[];
-    lastConsultation: string;
+    chc: string[];
     nextAppointment?: string;
-    status: 'Active' | 'Inactive' | 'Follow-up Required';
-    priority: 'Low' | 'Medium' | 'High';
+    status: 'Active' | 'Inactive';
+    priority: 'low' | 'medium' | 'high';
 }
+
 
 const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; setShowAddModal: (show: boolean) => void; }) => {
 
     const [newPatient, setNewPatient] = useState<Partial<Patient>>({
-        name: '',
         email: '',
         age: 0,
         height: 0,
         weight: 0,
-        gender: 'Male',
-        Dosha: 'Vata',
-        dietaryHabits: 'Vegetarian',
+        gender: 'MALE',
+        Dosha_ids: ['cmfchx8ep000ccmoqglwagbov'],
+        dietaryHabit: 'VEGAN',
         mealFrequency: 3,
-        bowelMovements: 'Regular',
-        waterIntake: 2.5,
+        bowelMovement: 'REGULAR',
+        waterIntake: 2,
         digestionQuality: "AVERAGE",
-        currentSymptoms: [],
+        chc: [],
         status: 'Active',
-        priority: 'Medium',
+        priority: 'medium',
     });
+
+    async function handleAddPatient() {
+        try {
+            const res =  await fetch('/api/addpatient', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}` || ''
+                },
+                body: JSON.stringify(newPatient),
+            });
+        } catch (error) {
+            
+        }
+    }
 
     return showAddModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
@@ -91,8 +103,8 @@ const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; 
                                 onChange={(e) => setNewPatient({...newPatient, gender: e.target.value as Patient['gender']})}
                                 className="w-full px-4 py-3 border border-gray-200 text-white rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
                             >
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
+                                <option value="MALE">Male</option>
+                                <option value="FEMALE">Female</option>
                             </select>
                             </div>
                         </div>
@@ -116,13 +128,13 @@ const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; 
                         <div>
                             <label className="block text-sm font-medium text-gray-200 mb-2">Dosha</label>
                             <select
-                                value={newPatient.Dosha}
-                                onChange={(e) => setNewPatient({...newPatient, Dosha: e.target.value as Patient['Dosha']})}
+                                value={newPatient.Dosha_ids![0]}
+                                onChange={(e) => setNewPatient({...newPatient, Dosha_ids: [e.target.value as Patient['Dosha_ids'][0]]})}
                                 className="w-full px-4 py-3 border border-gray-200 text-white rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
                             >
-                                <option value="Vata">Vata</option>
-                                <option value="Pitta">Pitta</option>
-                                <option value="Kapha">Kapha</option>
+                                <option value="cmfchx8ep000ccmoqglwagbov">Vata</option>
+                                <option value="cmfchx8ep000dcmoq3nxf2u44">Pitta</option>
+                                <option value="cmfchx8ep000ecmoqsvbuxc9z">Kapha</option>
                             </select>                           
                         </div>
                         <div className="grid grid-cols-2 gap-4">
@@ -144,9 +156,9 @@ const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; 
                                 onChange={(e) => setNewPatient({...newPatient, priority: e.target.value as Patient['priority']})}
                                 className="w-full px-4 py-3 border border-gray-200 text-white rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
                             >
-                                <option value="Low">Low</option>
-                                <option value="Medium">Medium</option>
-                                <option value="High">High</option>
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
                             </select>
                             </div>
                         </div>
@@ -165,15 +177,14 @@ const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; 
                         <div>
                             <label className="block text-sm font-medium text-gray-200 mb-2">Dietary Habits</label>
                             <select
-                            value={newPatient.dietaryHabits}
-                            onChange={(e) => setNewPatient({...newPatient, dietaryHabits: e.target.value as Patient['dietaryHabits']})}
+                            value={newPatient.dietaryHabit}
+                            onChange={(e) => setNewPatient({...newPatient, dietaryHabit: e.target.value as Patient['dietaryHabit']})}
                             className="w-full px-4 py-3 border border-gray-200 text-white rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                             >
-                            <option value="Vegetarian">Vegetarian</option>
-                            <option value="Vegan">Vegan</option>
-                            <option value="Non-Vegetarian">Non-Vegetarian</option>
-                            <option value="Jain">Jain</option>
-                            <option value="Sattvic">Sattvic</option>
+                            <option value="VEGETARIAN">Vegetarian</option>
+                            <option value="VEGAN">Vegan</option>
+                            <option value="NON_VEGETARIAN">Non-Vegetarian</option>
+                            <option value="EGGITARIAN">Eggitarian</option>
                             </select>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
@@ -192,9 +203,8 @@ const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; 
                             <label className="block text-sm font-medium text-gray-200 mb-2">Water Intake (L/day)</label>
                             <input
                                 type="number"
-                                step="0.1"
-                                min="0.5"
-                                max="5"
+                                min="0"
+                                max="10"
                                 value={newPatient.waterIntake}
                                 onChange={(e) => setNewPatient({...newPatient, waterIntake: parseFloat(e.target.value)})}
                                 className="w-full px-4 py-3 border border-gray-200 text-white rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
@@ -204,18 +214,17 @@ const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; 
                         <div>
                             <label className="block text-sm font-medium text-gray-200 mb-2">Bowel Movements</label>
                             <select
-                            value={newPatient.bowelMovements}
-                            onChange={(e) => setNewPatient({...newPatient, bowelMovements: e.target.value as Patient['bowelMovements']})}
+                            value={newPatient.bowelMovement}
+                            onChange={(e) => setNewPatient({...newPatient, bowelMovement: e.target.value as Patient['bowelMovement']})}
                             className="w-full px-4 py-3 border border-gray-200 text-white rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                             >
-                            <option value="Regular">Regular</option>
-                            <option value="Irregular">Irregular</option>
-                            <option value="Constipated">Constipated</option>
-                            <option value="Loose">Loose</option>
+                            <option value="REGULAR">Regular</option>
+                            <option value="CONSTIPATED">Constipated</option>
+                            <option value="LOOSE">Loose</option>
                             </select>
                         </div>
                          <div>
-                            <label className="block text-sm font-medium text-gray-200 mb-2">Bowel Movements</label>
+                            <label className="block text-sm font-medium text-gray-200 mb-2">Digestion Quality</label>
                             <select
                             value={newPatient.digestionQuality}
                             onChange={(e) => setNewPatient({...newPatient, digestionQuality: e.target.value as Patient['digestionQuality']})}
@@ -244,7 +253,7 @@ const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; 
                     <Button 
                         variant="primary"
                         size="md"
-                        //   onClick={handleAddPatient}
+                        onClick={handleAddPatient}
                     >
                         Add Patient
                     </Button>

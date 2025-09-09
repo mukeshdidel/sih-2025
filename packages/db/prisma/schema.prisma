@@ -67,10 +67,10 @@ model DoctorPatient {
   isActivePatient Boolean @default(true)
 
   gender           Gender
-  dob              DateTime
+  age              Int
   height           Float // in cm
   weight           Float // in kg
-  dietary_habits   DietaryHabits    @default(VEGETARIAN)
+  dietaryHabit     DietaryHabits    @default(VEGETARIAN)
   mealFrequency    Int              @default(3)
   waterIntake      Float            @default(2) // in liters
   digestionQuality DigestionQuality @default(AVERAGE)

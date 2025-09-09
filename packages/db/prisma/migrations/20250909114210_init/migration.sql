@@ -1,12 +1,3 @@
-/*
-  Warnings:
-
-  - You are about to drop the `Account` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Session` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `User` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `VerificationToken` table. If the table is not empty, all the data it contains will be lost.
-
-*/
 -- CreateEnum
 CREATE TYPE "public"."DietaryHabits" AS ENUM ('VEGETARIAN', 'VEGAN', 'NON_VEGETARIAN', 'EGGITARIAN');
 
@@ -17,6 +8,9 @@ CREATE TYPE "public"."BowelMovement" AS ENUM ('REGULAR', 'CONSTIPATED', 'LOOSE')
 CREATE TYPE "public"."DigestionQuality" AS ENUM ('EXCELLENT', 'GOOD', 'AVERAGE', 'POOR');
 
 -- CreateEnum
+CREATE TYPE "public"."Priority" AS ENUM ('low', 'medium', 'high');
+
+-- CreateEnum
 CREATE TYPE "public"."Gender" AS ENUM ('MALE', 'FEMALE');
 
 -- CreateEnum
@@ -24,24 +18,6 @@ CREATE TYPE "public"."AgeGroup" AS ENUM ('INFANT', 'CHILD', 'ADOLESCENT', 'ADULT
 
 -- CreateEnum
 CREATE TYPE "public"."MealTime" AS ENUM ('BREAKFAST', 'LUNCH', 'SNACKS', 'DINNER');
-
--- DropForeignKey
-ALTER TABLE "public"."Account" DROP CONSTRAINT "Account_userId_fkey";
-
--- DropForeignKey
-ALTER TABLE "public"."Session" DROP CONSTRAINT "Session_userId_fkey";
-
--- DropTable
-DROP TABLE "public"."Account";
-
--- DropTable
-DROP TABLE "public"."Session";
-
--- DropTable
-DROP TABLE "public"."User";
-
--- DropTable
-DROP TABLE "public"."VerificationToken";
 
 -- CreateTable
 CREATE TABLE "public"."Doctor" (
@@ -63,8 +39,18 @@ CREATE TABLE "public"."Patient" (
     "password" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Patient_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."DoctorPatient" (
+    "dp_id" TEXT NOT NULL,
+    "doctor_id" TEXT NOT NULL,
+    "patient_id" TEXT NOT NULL,
+    "isActivePatient" BOOLEAN NOT NULL DEFAULT true,
     "gender" "public"."Gender" NOT NULL,
-    "dob" TIMESTAMP(3) NOT NULL,
+    "age" INTEGER NOT NULL,
     "height" DOUBLE PRECISION NOT NULL,
     "weight" DOUBLE PRECISION NOT NULL,
     "dietary_habits" "public"."DietaryHabits" NOT NULL DEFAULT 'VEGETARIAN',
@@ -72,16 +58,32 @@ CREATE TABLE "public"."Patient" (
     "waterIntake" DOUBLE PRECISION NOT NULL DEFAULT 2,
     "digestionQuality" "public"."DigestionQuality" NOT NULL DEFAULT 'AVERAGE',
     "bowelMovement" "public"."BowelMovement" NOT NULL DEFAULT 'REGULAR',
+    "priority" "public"."Priority" NOT NULL DEFAULT 'medium',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "lastConsultation" TIMESTAMP(3),
+    "nextConsultation" TIMESTAMP(3),
 
-    CONSTRAINT "Patient_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "DoctorPatient_pkey" PRIMARY KEY ("dp_id")
 );
 
 -- CreateTable
-CREATE TABLE "public"."DoctorPatient" (
-    "doctor_id" TEXT NOT NULL,
-    "patient_id" TEXT NOT NULL,
+CREATE TABLE "public"."CriticalHealthCondition" (
+    "chc_id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
 
-    CONSTRAINT "DoctorPatient_pkey" PRIMARY KEY ("doctor_id","patient_id")
+    CONSTRAINT "CriticalHealthCondition_pkey" PRIMARY KEY ("chc_id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."ChcPatient" (
+    "chc_id" TEXT NOT NULL,
+    "dp_id" TEXT NOT NULL,
+    "diagnosed" TIMESTAMP(3) NOT NULL,
+    "resolved" TIMESTAMP(3),
+
+    CONSTRAINT "ChcPatient_pkey" PRIMARY KEY ("chc_id","dp_id")
 );
 
 -- CreateTable
@@ -97,7 +99,6 @@ CREATE TABLE "public"."Food" (
     "food_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "hindi_name" TEXT,
-    "cuisineCuisine_id" TEXT,
 
     CONSTRAINT "Food_pkey" PRIMARY KEY ("food_id")
 );
@@ -112,28 +113,11 @@ CREATE TABLE "public"."Nutrient" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."FoodNutrient" (
-    "food_id" TEXT NOT NULL,
-    "nutrient_id" TEXT NOT NULL,
-    "amount" DOUBLE PRECISION NOT NULL,
-
-    CONSTRAINT "FoodNutrient_pkey" PRIMARY KEY ("food_id","nutrient_id")
-);
-
--- CreateTable
 CREATE TABLE "public"."Rasa" (
     "rasa_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
 
     CONSTRAINT "Rasa_pkey" PRIMARY KEY ("rasa_id")
-);
-
--- CreateTable
-CREATE TABLE "public"."FoodRasa" (
-    "food_id" TEXT NOT NULL,
-    "rasa_id" TEXT NOT NULL,
-
-    CONSTRAINT "FoodRasa_pkey" PRIMARY KEY ("food_id","rasa_id")
 );
 
 -- CreateTable
@@ -145,19 +129,71 @@ CREATE TABLE "public"."Guna" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."FoodGuna" (
-    "food_id" TEXT NOT NULL,
-    "guna_id" TEXT NOT NULL,
-
-    CONSTRAINT "FoodGuna_pkey" PRIMARY KEY ("food_id","guna_id")
-);
-
--- CreateTable
 CREATE TABLE "public"."Dosha" (
     "dosha_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
 
     CONSTRAINT "Dosha_pkey" PRIMARY KEY ("dosha_id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."Virya" (
+    "virya_id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+
+    CONSTRAINT "Virya_pkey" PRIMARY KEY ("virya_id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."Vipaka" (
+    "vipaka_id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+
+    CONSTRAINT "Vipaka_pkey" PRIMARY KEY ("vipaka_id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."Digestibility" (
+    "digestibility_id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+
+    CONSTRAINT "Digestibility_pkey" PRIMARY KEY ("digestibility_id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."Rda" (
+    "rda_id" TEXT NOT NULL,
+    "nutrient_id" TEXT NOT NULL,
+    "age_group" "public"."AgeGroup" NOT NULL,
+    "gender" "public"."Gender" NOT NULL,
+    "amount" DOUBLE PRECISION NOT NULL,
+
+    CONSTRAINT "Rda_pkey" PRIMARY KEY ("rda_id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."FoodNutrient" (
+    "food_id" TEXT NOT NULL,
+    "nutrient_id" TEXT NOT NULL,
+    "amount" DOUBLE PRECISION NOT NULL,
+
+    CONSTRAINT "FoodNutrient_pkey" PRIMARY KEY ("food_id","nutrient_id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."FoodRasa" (
+    "food_id" TEXT NOT NULL,
+    "rasa_id" TEXT NOT NULL,
+
+    CONSTRAINT "FoodRasa_pkey" PRIMARY KEY ("food_id","rasa_id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."FoodGuna" (
+    "food_id" TEXT NOT NULL,
+    "guna_id" TEXT NOT NULL,
+
+    CONSTRAINT "FoodGuna_pkey" PRIMARY KEY ("food_id","guna_id")
 );
 
 -- CreateTable
@@ -170,18 +206,10 @@ CREATE TABLE "public"."FoodDosha" (
 
 -- CreateTable
 CREATE TABLE "public"."PatientDosha" (
-    "patient_id" TEXT NOT NULL,
+    "pd_id" TEXT NOT NULL,
     "dosha_id" TEXT NOT NULL,
 
-    CONSTRAINT "PatientDosha_pkey" PRIMARY KEY ("patient_id","dosha_id")
-);
-
--- CreateTable
-CREATE TABLE "public"."Virya" (
-    "virya_id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-
-    CONSTRAINT "Virya_pkey" PRIMARY KEY ("virya_id")
+    CONSTRAINT "PatientDosha_pkey" PRIMARY KEY ("pd_id","dosha_id")
 );
 
 -- CreateTable
@@ -193,14 +221,6 @@ CREATE TABLE "public"."FoodVirya" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."Vipaka" (
-    "vipaka_id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-
-    CONSTRAINT "Vipaka_pkey" PRIMARY KEY ("vipaka_id")
-);
-
--- CreateTable
 CREATE TABLE "public"."FoodVipaka" (
     "food_id" TEXT NOT NULL,
     "vipaka_id" TEXT NOT NULL,
@@ -209,30 +229,11 @@ CREATE TABLE "public"."FoodVipaka" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."Digestibility" (
-    "digestibility_id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-
-    CONSTRAINT "Digestibility_pkey" PRIMARY KEY ("digestibility_id")
-);
-
--- CreateTable
 CREATE TABLE "public"."FoodDigestibility" (
     "food_id" TEXT NOT NULL,
     "digestibility_id" TEXT NOT NULL,
 
     CONSTRAINT "FoodDigestibility_pkey" PRIMARY KEY ("food_id")
-);
-
--- CreateTable
-CREATE TABLE "public"."Rda" (
-    "rda_id" TEXT NOT NULL,
-    "nutrient_id" TEXT NOT NULL,
-    "age_group" "public"."AgeGroup" NOT NULL,
-    "gender" "public"."Gender" NOT NULL,
-    "amount" DOUBLE PRECISION NOT NULL,
-
-    CONSTRAINT "Rda_pkey" PRIMARY KEY ("rda_id")
 );
 
 -- CreateTable
@@ -280,6 +281,12 @@ CREATE UNIQUE INDEX "Doctor_email_key" ON "public"."Doctor"("email");
 CREATE UNIQUE INDEX "Patient_email_key" ON "public"."Patient"("email");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "DoctorPatient_doctor_id_patient_id_key" ON "public"."DoctorPatient"("doctor_id", "patient_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "CriticalHealthCondition_name_key" ON "public"."CriticalHealthCondition"("name");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Rasa_name_key" ON "public"."Rasa"("name");
 
 -- CreateIndex
@@ -302,6 +309,15 @@ ALTER TABLE "public"."DoctorPatient" ADD CONSTRAINT "DoctorPatient_doctor_id_fke
 
 -- AddForeignKey
 ALTER TABLE "public"."DoctorPatient" ADD CONSTRAINT "DoctorPatient_patient_id_fkey" FOREIGN KEY ("patient_id") REFERENCES "public"."Patient"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."ChcPatient" ADD CONSTRAINT "ChcPatient_chc_id_fkey" FOREIGN KEY ("chc_id") REFERENCES "public"."CriticalHealthCondition"("chc_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."ChcPatient" ADD CONSTRAINT "ChcPatient_dp_id_fkey" FOREIGN KEY ("dp_id") REFERENCES "public"."DoctorPatient"("dp_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."Rda" ADD CONSTRAINT "Rda_nutrient_id_fkey" FOREIGN KEY ("nutrient_id") REFERENCES "public"."Nutrient"("nutrient_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."FoodNutrient" ADD CONSTRAINT "FoodNutrient_food_id_fkey" FOREIGN KEY ("food_id") REFERENCES "public"."Food"("food_id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -328,10 +344,10 @@ ALTER TABLE "public"."FoodDosha" ADD CONSTRAINT "FoodDosha_food_id_fkey" FOREIGN
 ALTER TABLE "public"."FoodDosha" ADD CONSTRAINT "FoodDosha_dosha_id_fkey" FOREIGN KEY ("dosha_id") REFERENCES "public"."Dosha"("dosha_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."PatientDosha" ADD CONSTRAINT "PatientDosha_patient_id_fkey" FOREIGN KEY ("patient_id") REFERENCES "public"."Patient"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."PatientDosha" ADD CONSTRAINT "PatientDosha_dosha_id_fkey" FOREIGN KEY ("dosha_id") REFERENCES "public"."Dosha"("dosha_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."PatientDosha" ADD CONSTRAINT "PatientDosha_dosha_id_fkey" FOREIGN KEY ("dosha_id") REFERENCES "public"."Dosha"("dosha_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."PatientDosha" ADD CONSTRAINT "PatientDosha_pd_id_fkey" FOREIGN KEY ("pd_id") REFERENCES "public"."DoctorPatient"("dp_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."FoodVirya" ADD CONSTRAINT "FoodVirya_food_id_fkey" FOREIGN KEY ("food_id") REFERENCES "public"."Food"("food_id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -350,9 +366,6 @@ ALTER TABLE "public"."FoodDigestibility" ADD CONSTRAINT "FoodDigestibility_food_
 
 -- AddForeignKey
 ALTER TABLE "public"."FoodDigestibility" ADD CONSTRAINT "FoodDigestibility_digestibility_id_fkey" FOREIGN KEY ("digestibility_id") REFERENCES "public"."Digestibility"("digestibility_id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."Rda" ADD CONSTRAINT "Rda_nutrient_id_fkey" FOREIGN KEY ("nutrient_id") REFERENCES "public"."Nutrient"("nutrient_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."Recipe" ADD CONSTRAINT "Recipe_cuisine_id_fkey" FOREIGN KEY ("cuisine_id") REFERENCES "public"."Cuisine"("cuisine_id") ON DELETE RESTRICT ON UPDATE CASCADE;

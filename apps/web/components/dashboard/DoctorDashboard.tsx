@@ -13,7 +13,7 @@ const DoctorDashboard = ({userId}: {userId: string}) => {
 
     const [searchText, setSearchText] = useState("")
     const [loading, setLoading] = useState(false);
-    const [showAddModal, setShowAddModal] = useState(true)
+    const [showAddModal, setShowAddModal] = useState(false)
 
     useEffect(() => {
 

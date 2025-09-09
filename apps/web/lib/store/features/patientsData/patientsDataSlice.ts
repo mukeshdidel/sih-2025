@@ -16,4 +16,9 @@ export const patientDataSlice = createSlice({
 
 export const {  setPatientData } = patientDataSlice.actions
 export const selectPatientData = (state: RootState) => state.patientsData
+
+export const selectPatientById = (state: RootState, patientId: string) =>
+  state.patientsData.find((patient) => patient.patient_id === patientId);
+
+
 export default patientDataSlice.reducer

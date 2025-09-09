@@ -44,11 +44,11 @@ const layout = ({ children }: { children: ReactNode }) => {
   
 
   return (
-    <div className="h-screen flex flex-col min-h-screen bg-gray-900">
+    <div className="min-h-screen flex flex-col bg-gray-900 bg-fixed">
       <Topbar setIsOpen={setIsOpen} isOpen={isOpen} />
-      <div className="lg:flex flex-1 relative">
+      <div className="relative flex-1 mt-16">
         <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
-        <div className="flex-1 h-full overflow-y-auto">
+        <div className={`h-full ${isOpen ? "lg:ml-80 md:ml-60" : "ml-0 lg:ml-30"} transition-all duration-300 ease-in-out`}>
           {children}
         </div>
       </div>

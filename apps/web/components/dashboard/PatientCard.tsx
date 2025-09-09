@@ -1,10 +1,17 @@
+import { useRouter } from "next/navigation";
 import CheckCircle from "../../app/icons/CheckCircle";
 import Clock from "../../app/icons/Clock";
+import EyeIcon from "../../app/icons/EyeIcon";
 import MailIcon from "../../app/icons/MailIcon";
+import PencilIcon from "../../app/icons/PencilIcon";
+import Button from "../ui/Button";
 
-const PatientCard = ({name, age, gender, email}: {name: string; age: number; gender: string, email: string}) => {
+const PatientCard = ({name, age, gender, email, id}: {name: string; age: number; gender: string; email: string; id: string}) => {
 
-    const getStatusColor = (status: "active" | "inactive")  => {
+
+  const router = useRouter();
+
+  const getStatusColor = (status: "active" | "inactive")  => {
     switch (status) {
       case 'active':
         return 'bg-green-100 text-green-800 border-green-700';
@@ -36,12 +43,15 @@ const PatientCard = ({name, age, gender, email}: {name: string; age: number; gen
                 </span>
             </div>
         </div>
-            <div className="space-y-2 mb-4">
-                <div className="flex items-center space-x-2 text-sm text-green-500">
-                    <MailIcon />
-                    <span className="truncate text-gray-400">{email}</span>
-                </div>
+        <div className="space-y-2 mb-4">
+            <div className="flex items-center space-x-2 text-sm text-green-500">
+                <MailIcon />
+                <span className="truncate text-gray-400">{email}</span>
             </div>
+        </div>
+        <div className="flex justify-start gap-4">
+          <Button variant="primary" size="md" onClick={()=>{router.push(`/patient/${id}`)}} ><div className="flex gap-2"><PencilIcon /><p>Edit</p></div></Button>
+        </div>
     </div>
   )
 }

@@ -12,7 +12,7 @@ function App() {
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-3 text-green-400">
               <Leaf />
-              <span className="text-xl font-light text-white">App Name</span>
+              <span className="text-xl font-light text-white">AyurNutra</span>
             </div>
             <div className="text-green-400 hover:text-green-300 cursor-pointer">
               <UserIcon />
@@ -49,9 +49,9 @@ function App() {
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-3 text-green-400">
               <Leaf  />
-              <span className="text-sm font-light text-gray-400">App Name</span>
+              <span className="text-sm font-light text-gray-400">AyurNutra</span>
             </div>
-            <p className="text-gray-500 text-sm">© 2025 App Name. All rights reserved.</p>
+            <p className="text-gray-500 text-sm">© 2025 AyurNutra. All rights reserved.</p>
           </div>
         </div>
       </footer>

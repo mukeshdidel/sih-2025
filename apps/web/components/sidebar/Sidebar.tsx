@@ -9,7 +9,11 @@ const Sidebar = ({isOpen, setIsOpen}: {isOpen: boolean, setIsOpen: (isOpen: bool
 
 
     return (
-    <div className={` ${isOpen ? "absolute h-full lg:w-80 md:w-60 w-60": "hidden lg:10 lg:w-30 w-0"} lg:static lg:h-full lg:block border-r border-slate-700 rounded-r-4xl bg-gray-800  z-50 transition-all duration-300 ease-in-out`}>
+    <div className={`mt-16
+        ${isOpen
+            ? "fixed top-0 left-0 h-screen lg:w-80 md:w-60 w-60"
+            : "lg:fixed top-0 left-0 lg:w-30 lg:block hidden"}
+        lg:h-full border-r border-slate-700 bg-gray-800 z-20 transition-all duration-300 ease-in-out`}>
             <div className="h-full p-4">
                 {/* elements */}
                 <div className="flex flex-col mx-4 my-4 gap-2 text-green-500">

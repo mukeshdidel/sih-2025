@@ -21,11 +21,23 @@ export async function GET(req: Request) {
                 doctor_id: user.id
             },
             include: {
-                patient: true
+                patient: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                    }
+                },
+                PatientDosha: {
+                    include: {
+                        dosha: true
+                    }
+                },
             }
         })
 
         return new Response(JSON.stringify(patientData), { status: 200 });        
+
     } catch (error) {
         console.log(error);
         

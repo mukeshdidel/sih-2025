@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
 import userReducer from './features/user/userSlice'
+import PatientsDataReducer from './features/patientsData/patientsDataSlice'
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
-      user: userReducer
+      user: userReducer,
+      patientsData: PatientsDataReducer
     }
   })
 }

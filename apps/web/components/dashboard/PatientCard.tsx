@@ -2,7 +2,7 @@ import CheckCircle from "../../app/icons/CheckCircle";
 import Clock from "../../app/icons/Clock";
 import MailIcon from "../../app/icons/MailIcon";
 
-const PatientCard = ({name, age, gender}: {name: string; age: number; gender: string}) => {
+const PatientCard = ({name, age, gender, email}: {name: string; age: number; gender: string, email: string}) => {
 
     const getStatusColor = (status: "active" | "inactive")  => {
     switch (status) {
@@ -39,7 +39,7 @@ const PatientCard = ({name, age, gender}: {name: string; age: number; gender: st
             <div className="space-y-2 mb-4">
                 <div className="flex items-center space-x-2 text-sm text-green-500">
                     <MailIcon />
-                    <span className="truncate text-gray-400">{"ksjavshv@gmail,com"}</span>
+                    <span className="truncate text-gray-400">{email}</span>
                 </div>
             </div>
     </div>

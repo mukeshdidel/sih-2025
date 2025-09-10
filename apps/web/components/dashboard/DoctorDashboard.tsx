@@ -20,43 +20,17 @@ const DoctorDashboard = ({userId}: {userId: string}) => {
     const [filterDosha, setFilterDosha] = useState("all")
     const [filterStatus, setFilterStatus] = useState("all")
     const [searchText, setSearchText] = useState("")
-    const [loading, setLoading] = useState(false);
+
     const [showAddModal, setShowAddModal] = useState(false)
 
 
     const dispatch = useAppDispatch();
     const patientData = useAppSelector(selectPatientData);
 
-    useEffect(() => {
 
-        fetchDoctorData();
-        // Fetch doctor-specific data using userId
-    }, [userId])
-
-    async function fetchDoctorData() {
-        setLoading(true)
-        try {
-            const res = await fetch(`/api/patientdata`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('authToken')}` || ''
-                }
-            });
-            const data = await res.json();
-            console.log(data);
-            dispatch(setPatientData(data));
-        } catch (error) {
-            console.log(error);
-            
-        }
-        setLoading(false)
-    }
-
-    if(loading){
-        return <div className="h-full flex justify-center items-center text-2xl text-white font-bold">Loading...</div>
-    }
     
 
-  return (
+  return ( 
     <div className="h-full">
         <AddPatient showAddModal={showAddModal} setShowAddModal={setShowAddModal} />
         {/* search and add patient */}

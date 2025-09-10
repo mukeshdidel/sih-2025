@@ -25,9 +25,9 @@ function App() {
       <div className="flex-1 flex items-center">
         <div className="max-w-3xl mx-auto px-6 text-center">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-light text-white mb-8 leading-tight">
-            {/*Ancient Wisdom,*/} Some Quote
+            Ancient Wisdom,
             <br />
-            <span className="text-green-400">{/*Modern Precision*/} Some Other Quote</span>
+            <span className="text-green-400">Modern Precision</span>
           </h1>
           <p className="text-xl text-gray-400 my-12 font-light leading-relaxed max-w-2xl mx-auto">
             Create intelligent Ayurvedic diet charts that honor traditional principles 

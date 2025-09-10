@@ -17,3 +17,19 @@ export type DoctorPatientType = Prisma.DoctorPatientGetPayload<{
         }
     }
 }>;
+
+
+export type DietChartType = Prisma.DietChartGetPayload<{
+    include: {
+    DietChartRecipe: {
+        include: {
+        recipe: {
+            include: {
+            Cuisine: true,
+            RecipeIngredient: { include: { food: true } },
+            },
+        },
+        },
+    },
+    },
+}>;

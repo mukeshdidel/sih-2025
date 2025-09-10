@@ -1,3 +1,4 @@
+"use client"
 import { DoctorPatientType } from '@repo/db/types';
 import { useState } from 'react';
 import ActivityIcon from '../../app/icons/ActivityIcon';

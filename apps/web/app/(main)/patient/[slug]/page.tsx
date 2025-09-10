@@ -9,11 +9,14 @@ import FileTextIcon from "../../../icons/FileTextIcon";
 import CalendarIcon from "../../../icons/CalendarIcon";
 import Clock from "../../../icons/Clock";
 import HealthMetricsCard from "../../../../components/PatientPage/HealthMetricsCard";
+import { useState } from "react";
+import DietChart from "../../../../components/PatientPage/DietChart.";
 
 const page = () => {
 
     const params = useParams();
 
+    const [showDietChart, setShowShowDietChart] = useState(false);
     const patient = useAppSelector(state => selectPatientById(state, params.slug as string));
     
     if(!patient){
@@ -24,6 +27,7 @@ const page = () => {
 
     return (
         <div className="h-full text-white px-4 md:px-10 lg:px-10 mt-10">
+            <DietChart setShowDietChart={setShowShowDietChart} showDietChart={showDietChart} patient_id={params.slug as string} />
             <div className="rounded-2xl bg-gray-700 p-4 lg:p-6 ">
                 <div className="flex justify-between items-center mb-4 flex-wrap">
                     <div className="flex gap-2">
@@ -76,11 +80,11 @@ const page = () => {
             <div className="my-8 ">
                 <div className="flex flex-wrap gap-4">
                     <button
-                    // onClick={() => setIsDietChartModalOpen(true)}
+                    onClick={() => setShowShowDietChart(true)}
                     className="flex items-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
                     >
                     <FileTextIcon />
-                    <span>Create Diet Chart</span>
+                    <span>New Diet Chart</span>
                     </button>
                     <button
                     // onClick={handleScheduleConsultation}

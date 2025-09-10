@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken"
 import { useRouter } from "next/navigation"
 import { useAppDispatch } from "../../lib/store/hooks"
 import { setuser } from "../../lib/store/features/user/userSlice"
+import { setPatientData } from "../../lib/store/features/patientsData/patientsDataSlice"
 
 interface DecodedToken {
   email: string;
@@ -20,6 +21,25 @@ const layout = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  async function fetchDoctorData() {
+      setLoading(true)
+      try {
+          const res = await fetch(`/api/patientdata`, {
+              headers: {
+                  'Authorization': `Bearer ${localStorage.getItem('authToken')}` || ''
+              }
+          });
+          const data = await res.json();
+          console.log(data);
+          dispatch(setPatientData(data));
+      } catch (error) {
+          console.log(error);
+          
+      }
+      setLoading(false)
+  }
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
@@ -36,6 +56,9 @@ const layout = ({ children }: { children: ReactNode }) => {
     try {
       const decoded: DecodedToken = jwt.decode(token) as DecodedToken;
       dispatch(setuser({name: decoded.name, email: decoded.email, userType: decoded.userType, id: decoded.id}));
+      if(decoded.userType === "doctor"){
+        fetchDoctorData();
+      }
     } catch {
       localStorage.removeItem("authToken");
       router.push("/auth/signin");

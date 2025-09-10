@@ -85,6 +85,7 @@ model DoctorPatient {
   doctor     Doctor       @relation(fields: [doctor_id], references: [id])
   patient    Patient      @relation(fields: [patient_id], references: [id])
   ChcPatient ChcPatient[]
+  DietChart  DietChart[]
 
   @@unique([doctor_id, patient_id])
 }
@@ -115,10 +116,29 @@ model Cuisine {
   Recipe Recipe[]
 }
 
+enum Category {
+  FRUIT
+  VEGETABLE
+  GRAIN
+  LEGUME
+  NUT
+  SEED
+  DAIRY
+  MEAT
+  FISH
+  EGG
+  SPICE
+  HERB
+  BEVERAGE
+  SWEETENER
+  OIL
+}
+
 model Food {
   food_id           String              @id @default(cuid())
   name              String
   hindi_name        String?
+  category          Category            @default(VEGETABLE)
   FoodNutrient      FoodNutrient[]
   FoodRasa          FoodRasa[]
   FoodGuna          FoodGuna[]
@@ -297,8 +317,11 @@ model RecipeIngredient {
 
 model DietChart {
   chart_id        String            @id @default(cuid())
-  name            String
-  description     String?
+  db_id           String
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  mealSlots       MealTime[]
+  doctorPatient   DoctorPatient     @relation(fields: [db_id], references: [dp_id])
   DietChartRecipe DietChartRecipe[]
 }
 
@@ -313,11 +336,12 @@ model DietChartRecipe {
   chart_id  String
   recipe_id String
   mealTime  MealTime
+  WeekDay   Int // 0 - Sunday, 6 - Saturday
   food_id   String?
   quantity  Float? // in grams/ml
   dietChart DietChart @relation(fields: [chart_id], references: [chart_id])
   recipe    Recipe    @relation(fields: [recipe_id], references: [recipe_id])
   food      Food?     @relation(fields: [food_id], references: [food_id])
 
-  @@id([chart_id, recipe_id])
+  @@id([chart_id, recipe_id, WeekDay])
 }

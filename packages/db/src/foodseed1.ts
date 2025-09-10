@@ -36,7 +36,7 @@ async function main() {
     digestibilities.map((d) => [d.name, d.digestibility_id])
   );
 
-  // ✅ Helper function
+  // ✅ Helper function with category
   async function createFood(
     name: string,
     hindi: string,
@@ -46,16 +46,18 @@ async function main() {
     dosha: string,
     virya: string,
     vipaka: string,
-    digest: string
+    digest: string,
+    category: "FRUIT" | "VEGETABLE" | "GRAIN" | "LEGUME" | "NUT" | "SEED" | "DAIRY" | "MEAT" | "FISH" | "EGG" | "SPICE" | "HERB" | "BEVERAGE" | "SWEETENER" | "OIL"
   ) {
     return prisma.food.create({
       data: {
         name,
         hindi_name: hindi,
+        category, // <-- new column
         FoodNutrient: {
           create: nutrients.map((n) => ({
             amount: n.amount,
-            nutrient: { connect: { nutrient_id: nutrientMap[n.key] } }, // ✅ fixed
+            nutrient: { connect: { nutrient_id: nutrientMap[n.key] } },
           })),
         },
         FoodRasa: {
@@ -82,8 +84,18 @@ async function main() {
     });
   }
 
-  prisma.food.deleteMany();
-
+  await prisma.recipeIngredient.deleteMany();
+  console.log('cleared recipe ingredients');
+  await prisma.recipe.deleteMany();
+  console.log('cleared recipes');
+  await prisma.foodNutrient.deleteMany();
+  await prisma.foodRasa.deleteMany();
+  await prisma.foodGuna.deleteMany();
+  await prisma.foodDosha.deleteMany();
+  await prisma.foodVirya.deleteMany();
+  await prisma.foodVipaka.deleteMany();
+  await prisma.foodDigestibility.deleteMany();
+  await prisma.food.deleteMany();
   console.log("foods deleted.");
 
 // ---------- Batch 1: 1-10 Foods ----------
@@ -96,7 +108,7 @@ await createFood("Rice", "Chawal", [
   { key: "Calcium", amount: 10 },
   { key: "Iron", amount: 1.2 },
   { key: "Vitamin C", amount: 0 },
-], "Madhura", "Laghu", "Pitta", "Shita", "Madhura", "Easy");
+], "Madhura", "Laghu", "Pitta", "Shita", "Madhura", "Easy", "GRAIN");
 
 await createFood("Wheat", "Gehu", [
   { key: "Calories", amount: 340 },
@@ -107,7 +119,7 @@ await createFood("Wheat", "Gehu", [
   { key: "Calcium", amount: 34 },
   { key: "Iron", amount: 3.6 },
   { key: "Vitamin C", amount: 0 },
-], "Madhura", "Guru", "Vata", "Shita", "Madhura", "Medium");
+], "Madhura", "Guru", "Vata", "Shita", "Madhura", "Medium", "GRAIN");
 
 await createFood("Potato", "Aloo", [
   { key: "Calories", amount: 87 },
@@ -118,7 +130,7 @@ await createFood("Potato", "Aloo", [
   { key: "Calcium", amount: 11 },
   { key: "Iron", amount: 0.8 },
   { key: "Vitamin C", amount: 20 },
-], "Madhura", "Guru", "Vata", "Shita", "Madhura", "Medium");
+], "Madhura", "Guru", "Vata", "Shita", "Madhura", "Medium", "VEGETABLE");
 
 await createFood("Spinach", "Palak", [
   { key: "Calories", amount: 23 },
@@ -129,7 +141,7 @@ await createFood("Spinach", "Palak", [
   { key: "Calcium", amount: 99 },
   { key: "Iron", amount: 2.7 },
   { key: "Vitamin C", amount: 28 },
-], "Tikta", "Laghu", "Pitta", "Shita", "Madhura", "Easy");
+], "Tikta", "Laghu", "Pitta", "Shita", "Madhura", "Easy", "VEGETABLE");
 
 await createFood("Tomato", "Tamatar", [
   { key: "Calories", amount: 18 },
@@ -140,7 +152,7 @@ await createFood("Tomato", "Tamatar", [
   { key: "Calcium", amount: 10 },
   { key: "Iron", amount: 0.3 },
   { key: "Vitamin C", amount: 14 },
-], "Amla", "Laghu", "Kapha", "Ushna", "Amla", "Easy");
+], "Amla", "Laghu", "Kapha", "Ushna", "Amla", "Easy", "VEGETABLE");
 
 await createFood("Onion", "Pyaaz", [
   { key: "Calories", amount: 40 },
@@ -151,7 +163,7 @@ await createFood("Onion", "Pyaaz", [
   { key: "Calcium", amount: 23 },
   { key: "Iron", amount: 0.2 },
   { key: "Vitamin C", amount: 7 },
-], "Katu", "Ruksha", "Vata", "Ushna", "Katu", "Easy");
+], "Katu", "Ruksha", "Vata", "Ushna", "Katu", "Easy", "VEGETABLE");
 
 await createFood("Carrot", "Gajar", [
   { key: "Calories", amount: 41 },
@@ -162,7 +174,7 @@ await createFood("Carrot", "Gajar", [
   { key: "Calcium", amount: 33 },
   { key: "Iron", amount: 0.3 },
   { key: "Vitamin C", amount: 7 },
-], "Madhura", "Laghu", "Vata", "Shita", "Madhura", "Easy");
+], "Madhura", "Laghu", "Vata", "Shita", "Madhura", "Easy", "VEGETABLE");
 
 await createFood("Cauliflower", "Phool Gobhi", [
   { key: "Calories", amount: 25 },
@@ -173,7 +185,7 @@ await createFood("Cauliflower", "Phool Gobhi", [
   { key: "Calcium", amount: 22 },
   { key: "Iron", amount: 0.4 },
   { key: "Vitamin C", amount: 48 },
-], "Katu", "Laghu", "Kapha", "Shita", "Madhura", "Easy");
+], "Katu", "Laghu", "Kapha", "Shita", "Madhura", "Easy", "VEGETABLE");
 
 await createFood("Cabbage", "Patta Gobhi", [
   { key: "Calories", amount: 25 },
@@ -184,7 +196,7 @@ await createFood("Cabbage", "Patta Gobhi", [
   { key: "Calcium", amount: 40 },
   { key: "Iron", amount: 0.5 },
   { key: "Vitamin C", amount: 36 },
-], "Katu", "Laghu", "Kapha", "Shita", "Madhura", "Easy");
+], "Katu", "Laghu", "Kapha", "Shita", "Madhura", "Easy", "VEGETABLE");
 
 
 console.log("Batch 1 foods created.");
@@ -199,7 +211,7 @@ await createFood("Lentils", "Masoor Dal", [
   { key: "Calcium", amount: 19 },
   { key: "Iron", amount: 3.3 },
   { key: "Vitamin C", amount: 1.5 },
-], "Madhura", "Laghu", "Kapha", "Ushna", "Madhura", "Medium");
+], "Madhura", "Laghu", "Kapha", "Ushna", "Madhura", "Medium", "LEGUME");
 
 await createFood("Kidney Beans", "Rajma", [
   { key: "Calories", amount: 127 },
@@ -210,7 +222,7 @@ await createFood("Kidney Beans", "Rajma", [
   { key: "Calcium", amount: 28 },
   { key: "Iron", amount: 2.9 },
   { key: "Vitamin C", amount: 0 },
-], "Kashaya", "Guru", "Vata", "Ushna", "Katu", "Medium");
+], "Kashaya", "Guru", "Vata", "Ushna", "Katu", "Medium", "LEGUME");
 
 await createFood("Green Gram", "Moong Dal", [
   { key: "Calories", amount: 105 },
@@ -221,7 +233,7 @@ await createFood("Green Gram", "Moong Dal", [
   { key: "Calcium", amount: 27 },
   { key: "Iron", amount: 1.4 },
   { key: "Vitamin C", amount: 1.5 },
-], "Madhura", "Laghu", "Pitta", "Shita", "Madhura", "Easy");
+], "Madhura", "Laghu", "Pitta", "Shita", "Madhura", "Easy", "LEGUME");
 
 await createFood("Chickpeas", "Chana", [
   { key: "Calories", amount: 164 },
@@ -232,7 +244,7 @@ await createFood("Chickpeas", "Chana", [
   { key: "Calcium", amount: 49 },
   { key: "Iron", amount: 2.9 },
   { key: "Vitamin C", amount: 4 },
-], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium", "LEGUME");
 
 await createFood("Peas", "Matar", [
   { key: "Calories", amount: 81 },
@@ -243,7 +255,7 @@ await createFood("Peas", "Matar", [
   { key: "Calcium", amount: 25 },
   { key: "Iron", amount: 1.5 },
   { key: "Vitamin C", amount: 40 },
-], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Easy");
+], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Easy", "LEGUME");
 
 await createFood("Radish", "Mooli", [
   { key: "Calories", amount: 16 },
@@ -254,7 +266,7 @@ await createFood("Radish", "Mooli", [
   { key: "Calcium", amount: 25 },
   { key: "Iron", amount: 0.3 },
   { key: "Vitamin C", amount: 14.8 },
-], "Katu", "Laghu", "Kapha", "Ushna", "Katu", "Easy");
+], "Katu", "Laghu", "Kapha", "Ushna", "Katu", "Easy", "VEGETABLE");
 
 await createFood("Bitter Gourd", "Karela", [
   { key: "Calories", amount: 17 },
@@ -265,7 +277,7 @@ await createFood("Bitter Gourd", "Karela", [
   { key: "Calcium", amount: 19 },
   { key: "Iron", amount: 0.4 },
   { key: "Vitamin C", amount: 84 },
-], "Tikta", "Laghu", "Kapha", "Ushna", "Katu", "Easy");
+], "Tikta", "Laghu", "Kapha", "Ushna", "Katu", "Easy", "VEGETABLE");
 
 await createFood("Bottle Gourd", "Lauki", [
   { key: "Calories", amount: 14 },
@@ -276,7 +288,7 @@ await createFood("Bottle Gourd", "Lauki", [
   { key: "Calcium", amount: 26 },
   { key: "Iron", amount: 0.2 },
   { key: "Vitamin C", amount: 10 },
-], "Madhura", "Laghu", "Pitta", "Shita", "Madhura", "Easy");
+], "Madhura", "Laghu", "Pitta", "Shita", "Madhura", "Easy", "VEGETABLE");
 
 await createFood("Pumpkin", "Kaddu", [
   { key: "Calories", amount: 26 },
@@ -287,7 +299,7 @@ await createFood("Pumpkin", "Kaddu", [
   { key: "Calcium", amount: 21 },
   { key: "Iron", amount: 0.8 },
   { key: "Vitamin C", amount: 9 },
-], "Madhura", "Laghu", "Pitta", "Shita", "Madhura", "Easy");
+], "Madhura", "Laghu", "Pitta", "Shita", "Madhura", "Easy", "VEGETABLE");
 
 await createFood("Lady Finger", "Bhindi", [
   { key: "Calories", amount: 33 },
@@ -298,7 +310,7 @@ await createFood("Lady Finger", "Bhindi", [
   { key: "Calcium", amount: 82 },
   { key: "Iron", amount: 0.6 },
   { key: "Vitamin C", amount: 23 },
-], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Easy");
+], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Easy", "VEGETABLE");
 
 console.log("Batch 2 foods created.");
 
@@ -312,7 +324,7 @@ await createFood("Turnip", "Shalgam", [
   { key: "Calcium", amount: 30 },
   { key: "Iron", amount: 0.3 },
   { key: "Vitamin C", amount: 21 },
-], "Katu", "Laghu", "Kapha", "Ushna", "Katu", "Easy");
+], "Katu", "Laghu", "Kapha", "Ushna", "Katu", "Easy", "VEGETABLE");
 
 
 await createFood("Cucumber", "Kheera", [
@@ -324,7 +336,7 @@ await createFood("Cucumber", "Kheera", [
   { key: "Calcium", amount: 16 },
   { key: "Iron", amount: 0.3 },
   { key: "Vitamin C", amount: 3.2 },
-], "Madhura", "Laghu", "Pitta", "Shita", "Madhura", "Easy");
+], "Madhura", "Laghu", "Pitta", "Shita", "Madhura", "Easy", "VEGETABLE");
 
 await createFood("Coriander Leaves", "Dhaniya Patta", [
   { key: "Calories", amount: 23 },
@@ -335,7 +347,7 @@ await createFood("Coriander Leaves", "Dhaniya Patta", [
   { key: "Calcium", amount: 67 },
   { key: "Iron", amount: 1.8 },
   { key: "Vitamin C", amount: 27 },
-], "Tikta", "Laghu", "Kapha", "Shita", "Katu", "Easy");
+], "Tikta", "Laghu", "Kapha", "Shita", "Katu", "Easy", "HERB");
 
 await createFood("Mint Leaves", "Pudina", [
   { key: "Calories", amount: 44 },
@@ -346,7 +358,7 @@ await createFood("Mint Leaves", "Pudina", [
   { key: "Calcium", amount: 199 },
   { key: "Iron", amount: 15.6 },
   { key: "Vitamin C", amount: 31.8 },
-], "Tikta", "Laghu", "Pitta", "Shita", "Katu", "Easy");
+], "Tikta", "Laghu", "Pitta", "Shita", "Katu", "Easy", "HERB");
 
 await createFood("Drumstick", "Sahjan", [
   { key: "Calories", amount: 37 },
@@ -357,7 +369,7 @@ await createFood("Drumstick", "Sahjan", [
   { key: "Calcium", amount: 30 },
   { key: "Iron", amount: 0.4 },
   { key: "Vitamin C", amount: 141 },
-], "Katu", "Laghu", "Kapha", "Ushna", "Katu", "Easy");
+], "Katu", "Laghu", "Kapha", "Ushna", "Katu", "Easy", "VEGETABLE");
 
 await createFood("Ridge Gourd", "Turai", [
   { key: "Calories", amount: 20 },
@@ -368,7 +380,7 @@ await createFood("Ridge Gourd", "Turai", [
   { key: "Calcium", amount: 18 },
   { key: "Iron", amount: 0.4 },
   { key: "Vitamin C", amount: 12 },
-], "Madhura", "Laghu", "Pitta", "Shita", "Madhura", "Easy");
+], "Madhura", "Laghu", "Pitta", "Shita", "Madhura", "Easy", "VEGETABLE");
 
 await createFood("Snake Gourd", "Chichinda", [
   { key: "Calories", amount: 18 },
@@ -379,7 +391,7 @@ await createFood("Snake Gourd", "Chichinda", [
   { key: "Calcium", amount: 26 },
   { key: "Iron", amount: 0.3 },
   { key: "Vitamin C", amount: 6 },
-], "Madhura", "Laghu", "Pitta", "Shita", "Madhura", "Easy");
+], "Madhura", "Laghu", "Pitta", "Shita", "Madhura", "Easy", "VEGETABLE");
 
 await createFood("Pointed Gourd", "Parwal", [
   { key: "Calories", amount: 20 },
@@ -390,7 +402,7 @@ await createFood("Pointed Gourd", "Parwal", [
   { key: "Calcium", amount: 30 },
   { key: "Iron", amount: 0.4 },
   { key: "Vitamin C", amount: 18 },
-], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Easy");
+], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Easy", "VEGETABLE");
 
 await createFood("Raw Mango", "Kaccha Aam", [
   { key: "Calories", amount: 60 },
@@ -401,7 +413,7 @@ await createFood("Raw Mango", "Kaccha Aam", [
   { key: "Calcium", amount: 10 },
   { key: "Iron", amount: 0.2 },
   { key: "Vitamin C", amount: 36 },
-], "Amla", "Laghu", "Pitta", "Ushna", "Amla", "Easy");
+], "Amla", "Laghu", "Pitta", "Ushna", "Amla", "Easy", "FRUIT");
 
 console.log("Batch 3 foods created.");
 
@@ -415,7 +427,7 @@ await createFood("Ripe Mango", "Pakka Aam", [
   { key: "Calcium", amount: 11 },
   { key: "Iron", amount: 0.2 },
   { key: "Vitamin C", amount: 36 },
-], "Madhura", "Guru", "Pitta", "Ushna", "Madhura", "Medium");
+], "Madhura", "Guru", "Pitta", "Ushna", "Madhura", "Medium", "FRUIT");
 
 await createFood("Banana", "Kela", [
   { key: "Calories", amount: 89 },
@@ -426,7 +438,7 @@ await createFood("Banana", "Kela", [
   { key: "Calcium", amount: 5 },
   { key: "Iron", amount: 0.3 },
   { key: "Vitamin C", amount: 8.7 },
-], "Madhura", "Guru", "Kapha", "Shita", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Shita", "Madhura", "Medium", "FRUIT");
 
 await createFood("Apple", "Seb", [
   { key: "Calories", amount: 52 },
@@ -437,7 +449,7 @@ await createFood("Apple", "Seb", [
   { key: "Calcium", amount: 6 },
   { key: "Iron", amount: 0.1 },
   { key: "Vitamin C", amount: 4.6 },
-], "Madhura", "Laghu", "Vata", "Shita", "Madhura", "Easy");
+], "Madhura", "Laghu", "Vata", "Shita", "Madhura", "Easy", "FRUIT");
 
 await createFood("Guava", "Amrood", [
   { key: "Calories", amount: 68 },
@@ -448,7 +460,7 @@ await createFood("Guava", "Amrood", [
   { key: "Calcium", amount: 18 },
   { key: "Iron", amount: 0.3 },
   { key: "Vitamin C", amount: 228 },
-], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Easy");
+], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Easy", "FRUIT");
 
 await createFood("Papaya", "Papita", [
   { key: "Calories", amount: 43 },
@@ -459,7 +471,7 @@ await createFood("Papaya", "Papita", [
   { key: "Calcium", amount: 20 },
   { key: "Iron", amount: 0.3 },
   { key: "Vitamin C", amount: 60.9 },
-], "Madhura", "Laghu", "Pitta", "Shita", "Madhura", "Easy");
+], "Madhura", "Laghu", "Pitta", "Shita", "Madhura", "Easy", "FRUIT");
 
 await createFood("Pineapple", "Ananas", [
   { key: "Calories", amount: 50 },
@@ -470,7 +482,7 @@ await createFood("Pineapple", "Ananas", [
   { key: "Calcium", amount: 13 },
   { key: "Iron", amount: 0.3 },
   { key: "Vitamin C", amount: 47.8 },
-], "Amla", "Laghu", "Pitta", "Ushna", "Amla", "Easy");
+], "Amla", "Laghu", "Pitta", "Ushna", "Amla", "Easy", "FRUIT");
 
 await createFood("Orange", "Santra", [
   { key: "Calories", amount: 47 },
@@ -481,7 +493,7 @@ await createFood("Orange", "Santra", [
   { key: "Calcium", amount: 40 },
   { key: "Iron", amount: 0.1 },
   { key: "Vitamin C", amount: 53.2 },
-], "Amla", "Laghu", "Kapha", "Shita", "Amla", "Easy");
+], "Amla", "Laghu", "Kapha", "Shita", "Amla", "Easy", "FRUIT");
 
 await createFood("Watermelon", "Tarbooj", [
   { key: "Calories", amount: 30 },
@@ -492,7 +504,7 @@ await createFood("Watermelon", "Tarbooj", [
   { key: "Calcium", amount: 7 },
   { key: "Iron", amount: 0.2 },
   { key: "Vitamin C", amount: 8.1 },
-], "Madhura", "Laghu", "Pitta", "Shita", "Madhura", "Easy");
+], "Madhura", "Laghu", "Pitta", "Shita", "Madhura", "Easy", "FRUIT");
 
 await createFood("Pomegranate", "Anar", [
   { key: "Calories", amount: 83 },
@@ -503,7 +515,7 @@ await createFood("Pomegranate", "Anar", [
   { key: "Calcium", amount: 10 },
   { key: "Iron", amount: 0.3 },
   { key: "Vitamin C", amount: 10.2 },
-], "Madhura", "Laghu", "Vata", "Shita", "Madhura", "Easy");
+], "Madhura", "Laghu", "Vata", "Shita", "Madhura", "Easy", "FRUIT");
 
 await createFood("Grapes", "Angoor", [
   { key: "Calories", amount: 69 },
@@ -514,7 +526,7 @@ await createFood("Grapes", "Angoor", [
   { key: "Calcium", amount: 10 },
   { key: "Iron", amount: 0.3 },
   { key: "Vitamin C", amount: 10.8 },
-], "Madhura", "Guru", "Pitta", "Shita", "Madhura", "Medium");
+], "Madhura", "Guru", "Pitta", "Shita", "Madhura", "Medium", "FRUIT");
 
 console.log("Batch 4 foods created.");
 
@@ -528,7 +540,7 @@ await createFood("Strawberry", "Strawberry", [
   { key: "Calcium", amount: 16 },
   { key: "Iron", amount: 0.4 },
   { key: "Vitamin C", amount: 58.8 },
-], "Amla", "Laghu", "Pitta", "Shita", "Amla", "Easy");
+], "Amla", "Laghu", "Pitta", "Shita", "Amla", "Easy", "FRUIT");
 
 await createFood("Blueberry", "Blueberry", [
   { key: "Calories", amount: 57 },
@@ -539,7 +551,7 @@ await createFood("Blueberry", "Blueberry", [
   { key: "Calcium", amount: 6 },
   { key: "Iron", amount: 0.3 },
   { key: "Vitamin C", amount: 9.7 },
-], "Madhura", "Laghu", "Pitta", "Shita", "Madhura", "Easy");
+], "Madhura", "Laghu", "Pitta", "Shita", "Madhura", "Easy", "FRUIT");
 
 await createFood("Blackberry", "Blackberry", [
   { key: "Calories", amount: 43 },
@@ -550,7 +562,7 @@ await createFood("Blackberry", "Blackberry", [
   { key: "Calcium", amount: 29 },
   { key: "Iron", amount: 0.6 },
   { key: "Vitamin C", amount: 21 },
-], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Easy");
+], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Easy", "FRUIT");
 
 await createFood("Raspberry", "Raspberry", [
   { key: "Calories", amount: 52 },
@@ -561,7 +573,7 @@ await createFood("Raspberry", "Raspberry", [
   { key: "Calcium", amount: 25 },
   { key: "Iron", amount: 0.7 },
   { key: "Vitamin C", amount: 26.2 },
-], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Easy");
+], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Easy", "FRUIT");
 
 await createFood("Dates", "Khajoor", [
   { key: "Calories", amount: 282 },
@@ -572,7 +584,7 @@ await createFood("Dates", "Khajoor", [
   { key: "Calcium", amount: 39 },
   { key: "Iron", amount: 1 },
   { key: "Vitamin C", amount: 0 },
-], "Madhura", "Guru", "Vata", "Ushna", "Madhura", "Medium");
+], "Madhura", "Guru", "Vata", "Ushna", "Madhura", "Medium", "FRUIT");
 
 await createFood("Fig", "Anjeer", [
   { key: "Calories", amount: 74 },
@@ -583,7 +595,7 @@ await createFood("Fig", "Anjeer", [
   { key: "Calcium", amount: 35 },
   { key: "Iron", amount: 0.4 },
   { key: "Vitamin C", amount: 2 },
-], "Madhura", "Guru", "Kapha", "Shita", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Shita", "Madhura", "Medium", "FRUIT");
 
 await createFood("Jackfruit", "Kathal", [
   { key: "Calories", amount: 95 },
@@ -594,7 +606,7 @@ await createFood("Jackfruit", "Kathal", [
   { key: "Calcium", amount: 24 },
   { key: "Iron", amount: 0.2 },
   { key: "Vitamin C", amount: 13.7 },
-], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium", "FRUIT");
 
 await createFood("Sapota", "Chikoo", [
   { key: "Calories", amount: 83 },
@@ -605,7 +617,7 @@ await createFood("Sapota", "Chikoo", [
   { key: "Calcium", amount: 21 },
   { key: "Iron", amount: 0.8 },
   { key: "Vitamin C", amount: 14.7 },
-], "Madhura", "Guru", "Kapha", "Shita", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Shita", "Madhura", "Medium", "FRUIT");
 
 await createFood("Pear", "Nashpati", [
   { key: "Calories", amount: 57 },
@@ -616,7 +628,7 @@ await createFood("Pear", "Nashpati", [
   { key: "Calcium", amount: 9 },
   { key: "Iron", amount: 0.2 },
   { key: "Vitamin C", amount: 4.3 },
-], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Easy");
+], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Easy", "FRUIT");
 
 await createFood("Lychee", "Litchi", [
   { key: "Calories", amount: 66 },
@@ -627,7 +639,7 @@ await createFood("Lychee", "Litchi", [
   { key: "Calcium", amount: 5 },
   { key: "Iron", amount: 0.3 },
   { key: "Vitamin C", amount: 71.5 },
-], "Madhura", "Laghu", "Pitta", "Shita", "Madhura", "Easy");
+], "Madhura", "Laghu", "Pitta", "Shita", "Madhura", "Easy", "FRUIT");
 
 console.log("Batch 5 foods created.");
 
@@ -641,7 +653,7 @@ await createFood("Sweet Potato", "Shakarkand", [
   { key: "Calcium", amount: 30 },
   { key: "Iron", amount: 0.6 },
   { key: "Vitamin C", amount: 2.4 },
-], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium", "VEGETABLE");
 
 await createFood("Beetroot", "Chukandar", [
   { key: "Calories", amount: 43 },
@@ -652,7 +664,7 @@ await createFood("Beetroot", "Chukandar", [
   { key: "Calcium", amount: 16 },
   { key: "Iron", amount: 0.8 },
   { key: "Vitamin C", amount: 4.9 },
-], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Easy");
+], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Easy", "VEGETABLE");
 
 
 await createFood("French Beans", "Farasbi", [
@@ -664,7 +676,7 @@ await createFood("French Beans", "Farasbi", [
   { key: "Calcium", amount: 37 },
   { key: "Iron", amount: 1 },
   { key: "Vitamin C", amount: 12 },
-], "Katu", "Laghu", "Kapha", "Shita", "Katu", "Easy");
+], "Katu", "Laghu", "Kapha", "Shita", "Katu", "Easy", "VEGETABLE");
 
 console.log("Batch 6 foods created.");
 
@@ -678,7 +690,7 @@ await createFood("Cluster Beans", "Gawar Phali", [
   { key: "Calcium", amount: 49 },
   { key: "Iron", amount: 4.5 },
   { key: "Vitamin C", amount: 49 },
-], "Katu", "Laghu", "Vata", "Shita", "Katu", "Easy");
+], "Katu", "Laghu", "Vata", "Shita", "Katu", "Easy", "VEGETABLE");
 
 
 await createFood("Ash Gourd", "Petha", [
@@ -690,7 +702,7 @@ await createFood("Ash Gourd", "Petha", [
   { key: "Calcium", amount: 30 },
   { key: "Iron", amount: 0.4 },
   { key: "Vitamin C", amount: 13 },
-], "Madhura", "Laghu", "Pitta", "Shita", "Madhura", "Easy");
+], "Madhura", "Laghu", "Pitta", "Shita", "Madhura", "Easy", "VEGETABLE");
 
 
 
@@ -703,7 +715,7 @@ await createFood("Zucchini", "Zucchini", [
   { key: "Calcium", amount: 16 },
   { key: "Iron", amount: 0.4 },
   { key: "Vitamin C", amount: 17.9 },
-], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Easy");
+], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Easy", "VEGETABLE");
 
 await createFood("Capsicum", "Shimla Mirch", [
   { key: "Calories", amount: 20 },
@@ -714,7 +726,7 @@ await createFood("Capsicum", "Shimla Mirch", [
   { key: "Calcium", amount: 10 },
   { key: "Iron", amount: 0.3 },
   { key: "Vitamin C", amount: 80.4 },
-], "Katu", "Laghu", "Pitta", "Ushna", "Katu", "Easy");
+], "Katu", "Laghu", "Pitta", "Ushna", "Katu", "Easy", "VEGETABLE");
 
 
 
@@ -730,7 +742,7 @@ await createFood("Corn", "Makka", [
   { key: "Calcium", amount: 2 },
   { key: "Iron", amount: 0.5 },
   { key: "Vitamin C", amount: 6.8 },
-], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium", "GRAIN");
 
 await createFood("Barley", "Jau", [
   { key: "Calories", amount: 354 },
@@ -741,7 +753,7 @@ await createFood("Barley", "Jau", [
   { key: "Calcium", amount: 33 },
   { key: "Iron", amount: 3.6 },
   { key: "Vitamin C", amount: 0 },
-], "Madhura", "Guru", "Kapha", "Shita", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Shita", "Madhura", "Medium", "GRAIN");
 
 await createFood("Millet", "Bajra", [
   { key: "Calories", amount: 378 },
@@ -752,7 +764,7 @@ await createFood("Millet", "Bajra", [
   { key: "Calcium", amount: 42 },
   { key: "Iron", amount: 8 },
   { key: "Vitamin C", amount: 0 },
-], "Madhura", "Guru", "Kapha", "Shita", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Shita", "Madhura", "Medium", "GRAIN");
 
 await createFood("Sorghum", "Jowar", [
   { key: "Calories", amount: 329 },
@@ -763,7 +775,7 @@ await createFood("Sorghum", "Jowar", [
   { key: "Calcium", amount: 25 },
   { key: "Iron", amount: 4.1 },
   { key: "Vitamin C", amount: 0 },
-], "Madhura", "Guru", "Kapha", "Shita", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Shita", "Madhura", "Medium", "GRAIN");
 
 await createFood("Oats", "Jai", [
   { key: "Calories", amount: 389 },
@@ -774,7 +786,7 @@ await createFood("Oats", "Jai", [
   { key: "Calcium", amount: 54 },
   { key: "Iron", amount: 4.7 },
   { key: "Vitamin C", amount: 0 },
-], "Madhura", "Guru", "Kapha", "Shita", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Shita", "Madhura", "Medium", "GRAIN");
 
 await createFood("Quinoa", "Quinoa", [
   { key: "Calories", amount: 368 },
@@ -785,7 +797,7 @@ await createFood("Quinoa", "Quinoa", [
   { key: "Calcium", amount: 47 },
   { key: "Iron", amount: 4.6 },
   { key: "Vitamin C", amount: 0 },
-], "Madhura", "Guru", "Kapha", "Shita", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Shita", "Madhura", "Medium", "GRAIN");
 
 await createFood("Amaranth Seeds", "Rajgira", [
   { key: "Calories", amount: 371 },
@@ -796,7 +808,7 @@ await createFood("Amaranth Seeds", "Rajgira", [
   { key: "Calcium", amount: 159 },
   { key: "Iron", amount: 7.6 },
   { key: "Vitamin C", amount: 4.2 },
-], "Madhura", "Guru", "Kapha", "Shita", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Shita", "Madhura", "Medium", "GRAIN");
 
 await createFood("Buckwheat", "Kuttu", [
   { key: "Calories", amount: 343 },
@@ -807,7 +819,7 @@ await createFood("Buckwheat", "Kuttu", [
   { key: "Calcium", amount: 18 },
   { key: "Iron", amount: 2.2 },
   { key: "Vitamin C", amount: 0 },
-], "Madhura", "Guru", "Kapha", "Shita", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Shita", "Madhura", "Medium", "GRAIN");
 
 await createFood("Ragi", "Nachni", [
   { key: "Calories", amount: 336 },
@@ -818,7 +830,7 @@ await createFood("Ragi", "Nachni", [
   { key: "Calcium", amount: 344 },
   { key: "Iron", amount: 3.9 },
   { key: "Vitamin C", amount: 0 },
-], "Madhura", "Guru", "Kapha", "Shita", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Shita", "Madhura", "Medium", "GRAIN");
 
 await createFood("Rice Bran", "Chawal Ki Bhusi", [
   { key: "Calories", amount: 316 },
@@ -829,7 +841,7 @@ await createFood("Rice Bran", "Chawal Ki Bhusi", [
   { key: "Calcium", amount: 57 },
   { key: "Iron", amount: 18.5 },
   { key: "Vitamin C", amount: 0 },
-], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium", "GRAIN");
 
 console.log("Batch 8 foods created.");
 
@@ -844,7 +856,7 @@ await createFood("Black Gram", "Urad Dal", [
   { key: "Calcium", amount: 138 },
   { key: "Iron", amount: 7.6 },
   { key: "Vitamin C", amount: 0 },
-], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium", "LEGUME");
 
 await createFood("Red Lentil", "Masoor Dal", [
   { key: "Calories", amount: 352 },
@@ -855,7 +867,7 @@ await createFood("Red Lentil", "Masoor Dal", [
   { key: "Calcium", amount: 56 },
   { key: "Iron", amount: 7.5 },
   { key: "Vitamin C", amount: 4.5 },
-], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Medium");
+], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Medium", "LEGUME");
 
 await createFood("Soybeans", "Soyabean", [
   { key: "Calories", amount: 446 },
@@ -866,7 +878,7 @@ await createFood("Soybeans", "Soyabean", [
   { key: "Calcium", amount: 277 },
   { key: "Iron", amount: 15.7 },
   { key: "Vitamin C", amount: 6 },
-], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium", "LEGUME");
 
 await createFood("Pigeon Pea", "Toor Dal", [
   { key: "Calories", amount: 343 },
@@ -877,7 +889,7 @@ await createFood("Pigeon Pea", "Toor Dal", [
   { key: "Calcium", amount: 73 },
   { key: "Iron", amount: 5.2 },
   { key: "Vitamin C", amount: 0 },
-], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Medium");
+], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Medium", "LEGUME");
 
 await createFood("Green Pea Dry", "Sukha Matar", [
   { key: "Calories", amount: 118 },
@@ -888,7 +900,7 @@ await createFood("Green Pea Dry", "Sukha Matar", [
   { key: "Calcium", amount: 25 },
   { key: "Iron", amount: 1.5 },
   { key: "Vitamin C", amount: 1.5 },
-], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Medium");
+], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Medium", "LEGUME");
 
 await createFood("Horse Gram", "Kulthi Dal", [
   { key: "Calories", amount: 321 },
@@ -899,7 +911,7 @@ await createFood("Horse Gram", "Kulthi Dal", [
   { key: "Calcium", amount: 287 },
   { key: "Iron", amount: 6.7 },
   { key: "Vitamin C", amount: 1.5 },
-], "Madhura", "Laghu", "Kapha", "Ushna", "Madhura", "Medium");
+], "Madhura", "Laghu", "Kapha", "Ushna", "Madhura", "Medium", "LEGUME");
 
 await createFood("Broad Beans", "Bakla", [
   { key: "Calories", amount: 88 },
@@ -910,7 +922,7 @@ await createFood("Broad Beans", "Bakla", [
   { key: "Calcium", amount: 37 },
   { key: "Iron", amount: 1.5 },
   { key: "Vitamin C", amount: 1.4 },
-], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Medium");
+], "Madhura", "Laghu", "Kapha", "Shita", "Madhura", "Medium", "LEGUME");
 
 console.log("Batch 9 foods created.");
 
@@ -924,7 +936,7 @@ await createFood("Walnut", "Akhrot", [
   { key: "Calcium", amount: 98 },
   { key: "Iron", amount: 2.9 },
   { key: "Vitamin C", amount: 1.3 },
-], "Kashaya", "Guru", "Vata", "Ushna", "Madhura", "Medium");
+], "Kashaya", "Guru", "Vata", "Ushna", "Madhura", "Medium", "NUT");
 
 await createFood("Almond", "Badam", [
   { key: "Calories", amount: 579 },
@@ -935,7 +947,7 @@ await createFood("Almond", "Badam", [
   { key: "Calcium", amount: 264 },
   { key: "Iron", amount: 3.7 },
   { key: "Vitamin C", amount: 0 },
-], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium", "NUT");
 
 await createFood("Cashew", "Kaju", [
   { key: "Calories", amount: 553 },
@@ -946,7 +958,7 @@ await createFood("Cashew", "Kaju", [
   { key: "Calcium", amount: 37 },
   { key: "Iron", amount: 6.7 },
   { key: "Vitamin C", amount: 0.5 },
-], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium", "NUT");
 
 await createFood("Pistachio", "Pista", [
   { key: "Calories", amount: 562 },
@@ -957,7 +969,7 @@ await createFood("Pistachio", "Pista", [
   { key: "Calcium", amount: 105 },
   { key: "Iron", amount: 4 },
   { key: "Vitamin C", amount: 5.6 },
-], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium", "NUT");
 
 await createFood("Peanut", "Moongfali", [
   { key: "Calories", amount: 567 },
@@ -968,7 +980,7 @@ await createFood("Peanut", "Moongfali", [
   { key: "Calcium", amount: 92 },
   { key: "Iron", amount: 4.6 },
   { key: "Vitamin C", amount: 0 },
-], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium", "NUT");
 
 await createFood("Hazelnut", "Filbert", [
   { key: "Calories", amount: 628 },
@@ -979,7 +991,7 @@ await createFood("Hazelnut", "Filbert", [
   { key: "Calcium", amount: 114 },
   { key: "Iron", amount: 4.7 },
   { key: "Vitamin C", amount: 6.3 },
-], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium", "NUT");
 
 await createFood("Pine Nut", "Chilgoza", [
   { key: "Calories", amount: 673 },
@@ -990,7 +1002,7 @@ await createFood("Pine Nut", "Chilgoza", [
   { key: "Calcium", amount: 16 },
   { key: "Iron", amount: 5.5 },
   { key: "Vitamin C", amount: 0 },
-], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium", "NUT");
 
 await createFood("Brazil Nut", "Brazil Akhrot", [
   { key: "Calories", amount: 656 },
@@ -1001,7 +1013,7 @@ await createFood("Brazil Nut", "Brazil Akhrot", [
   { key: "Calcium", amount: 160 },
   { key: "Iron", amount: 2.4 },
   { key: "Vitamin C", amount: 0.7 },
-], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium", "NUT");
 
 await createFood("Macadamia Nut", "Macadamia", [
   { key: "Calories", amount: 718 },
@@ -1012,7 +1024,7 @@ await createFood("Macadamia Nut", "Macadamia", [
   { key: "Calcium", amount: 85 },
   { key: "Iron", amount: 3.7 },
   { key: "Vitamin C", amount: 1.2 },
-], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Ushna", "Madhura", "Medium", "NUT");
 
 await createFood("Chestnut", "Singhara", [
   { key: "Calories", amount: 213 },
@@ -1023,7 +1035,7 @@ await createFood("Chestnut", "Singhara", [
   { key: "Calcium", amount: 30 },
   { key: "Iron", amount: 0.9 },
   { key: "Vitamin C", amount: 26 },
-], "Madhura", "Guru", "Kapha", "Shita", "Madhura", "Medium");
+], "Madhura", "Guru", "Kapha", "Shita", "Madhura", "Medium", "NUT");
 
 console.log("Batch 10 foods created.");
 

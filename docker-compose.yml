@@ -1,26 +1,32 @@
-version: "3.8"
+version: '3.8'
 
 services:
-  postgres:
-    image: postgres:latest
+  db:
+    image: postgres:16
+    restart: always
     environment:
-      POSTGRES_USER: posegres
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: sih
     ports:
       - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
 
-  sih_web:
+  app:
     build:
-      network: host
-      context: ./
-      dockerfile: docker/dev/dockerfile.fe
-
+      context: .
+      dockerfile: ./docker/dev/dockerfile.fe
     environment:
-      - DATABASE_URL=postgres://posegres:password@postgres:5432/sih
-
+      DATABASE_URL: postgres://postgres:postgres@db:5432/sih
+      JWT_SECRET: your_jwt_secret
     depends_on:
-      - postgres
-
+      - db
     ports:
       - "3000:3000"
+    volumes:
+      - .:/usr/src/app
+    command: [ "bun", "run", "docker:start" ]
+
+volumes:
+  db_data:

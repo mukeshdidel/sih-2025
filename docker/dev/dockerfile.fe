@@ -1,16 +1,21 @@
 FROM oven/bun:latest
+
 RUN apt-get update -y && apt-get install -y openssl
 RUN apt-get update && apt-get install -y nodejs npm && rm -rf /var/lib/apt/lists/*
-
 
 WORKDIR /usr/src/app
 
 COPY . .
 
-RUN bun i 
+RUN bun i
+
+# Ensure Prisma binaries are built for Linux
 RUN bun run db:generate
+
+# Build the app
 RUN bun run build
 
 EXPOSE 3000
 
-CMD [ "bun", "run", "web:start" ]
+# Entrypoint script will run migrations and seeds before starting the app
+CMD [ "bun", "run", "docker:start" ]

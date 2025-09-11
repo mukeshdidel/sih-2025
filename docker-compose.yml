@@ -23,7 +23,6 @@ services:
       - "3000:3000"
     volumes:
       - .:/usr/src/app
-    command: ["bun", "run", "docker:start"]
 
 volumes:
   db_data:

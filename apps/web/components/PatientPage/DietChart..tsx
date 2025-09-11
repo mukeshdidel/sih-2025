@@ -156,7 +156,7 @@ const DietChart = ({showDietChart, setShowDietChart, patient_id}: {showDietChart
                         {day}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        {generatedChart.mealSlots.map((mealTime) => {
+                        {generatedChart.mealSlots.map((mealTime: string) => {
                         const cellId = `${day}-${mealTime}`;
                         const isEditing = editingCell === cellId;
                         const weekDayIndex = days.indexOf(day); // 0 for Monday, 1 for Tuesday, etc.

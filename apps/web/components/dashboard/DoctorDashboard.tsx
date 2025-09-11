@@ -65,14 +65,14 @@ const DoctorDashboard = ({userId}: {userId: string}) => {
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 mb-8 px-4 md:px-10 lg:px-10 md:py-6 lg:py-8">
             <StatOverview text="Total Patients" number={patientData.length} Icon={<UserIcon2 />} />
             <StatOverview text="Total Active" number={patientData.filter(p => p.isActivePatient).length} Icon={<Clock2 />} />
-            <StatOverview text="Total Vata imbalanced" number={patientData.filter(p => p.PatientDosha.some(d => d.dosha.name === "Vata")).length} Icon={<WindIcon />} />
-            <StatOverview text="Total Pitta imbalanced" number={patientData.filter(p => p.PatientDosha.some(d => d.dosha.name === "Pitta")).length} Icon={<FireIcon />} />
-            <StatOverview text="Total Kapha imbalanced" number={patientData.filter(p => p.PatientDosha.some(d => d.dosha.name === "Kapha")).length} Icon={<Leaf />} />
+            <StatOverview text="Total Vata imbalanced" number={patientData.filter(p => p.PatientDosha.some((d: any) => d.dosha.name === "Vata")).length} Icon={<WindIcon />} />
+            <StatOverview text="Total Pitta imbalanced" number={patientData.filter(p => p.PatientDosha.some((d: any) => d.dosha.name === "Pitta")).length} Icon={<FireIcon />} />
+            <StatOverview text="Total Kapha imbalanced" number={patientData.filter(p => p.PatientDosha.some((d: any) => d.dosha.name === "Kapha")).length} Icon={<Leaf />} />
         </div>
         {/* patient list */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 px-4 md:px-10 lg:px-10">
             {
-                (Array.isArray(patientData) ? patientData : []).filter( p => (filterStatus === "all" || (filterStatus === "Active" ? p.isActivePatient : !p.isActivePatient)) && (filterDosha === "all" || p.PatientDosha.some(d => d.dosha.name === filterDosha)) && p.patient.name!.toLowerCase().includes(searchText.toLowerCase())).map(p => <div key={p.patient.id}><PatientCard id={p.patient.id!} email={p.patient.email!} name={p.patient.name!} age={p.age} gender={p.gender} /></div> )
+                (Array.isArray(patientData) ? patientData : []).filter( p => (filterStatus === "all" || (filterStatus === "Active" ? p.isActivePatient : !p.isActivePatient)) && (filterDosha === "all" || p.PatientDosha.some((d: any) => d.dosha.name === filterDosha)) && p.patient.name!.toLowerCase().includes(searchText.toLowerCase())).map(p => <div key={p.patient.id}><PatientCard id={p.patient.id!} email={p.patient.email!} name={p.patient.name!} age={p.age} gender={p.gender} /></div> )
             }
         </div>
     </div>

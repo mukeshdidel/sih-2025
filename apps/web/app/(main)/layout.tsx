@@ -32,6 +32,7 @@ const layout = ({ children }: { children: ReactNode }) => {
               }
           });
           const data = await res.json();
+          // @ts-ignore
           dispatch(setPatientData(data));
       } catch (error) {
         console.log(error);

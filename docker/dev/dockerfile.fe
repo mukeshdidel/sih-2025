@@ -9,13 +9,7 @@ COPY . .
 
 RUN bun i --verbose
 
-# Ensure Prisma binaries are built for Linux
-RUN bun run db:generate
+# Generate Prisma client in generated/client
+RUN cd packages/db && bunx prisma generate
 
-# Build the app
-RUN bun run build
-
-EXPOSE 3000
-
-# Entrypoint script will run migrations and seeds before starting the app
 CMD [ "bun", "run", "docker:start" ]

@@ -1,10 +1,10 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit'
 import type { RootState } from '../../store' 
 import {DoctorPatientType} from '@repo/db/types'
 
 export type patientDataState = DoctorPatientType[]
 
-export const patientDataSlice = createSlice({
+export const patientDataSlice: Slice<patientDataState> = createSlice({
   name: 'patientData',
   initialState: [] as patientDataState,
   reducers: {
@@ -15,10 +15,16 @@ export const patientDataSlice = createSlice({
 })
 
 export const {  setPatientData } = patientDataSlice.actions
-export const selectPatientData = (state: RootState) => state.patientsData
+// ✅ Explicit return type added here
+export const selectPatientData = (state: RootState) =>
+  state.patientsData
 
-export const selectPatientById = (state: RootState, patientId: string) =>
-  state.patientsData.find((patient) => patient.patient_id === patientId);
+// ✅ Explicit return type added here
+export const selectPatientById = (
+  state: RootState,
+  patientId: string
+): DoctorPatientType | undefined =>
+  state.patientsData.find((patient) => patient.patient_id === patientId)
 
 
 export default patientDataSlice.reducer

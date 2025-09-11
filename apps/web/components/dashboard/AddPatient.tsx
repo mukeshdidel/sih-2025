@@ -13,7 +13,8 @@ interface Patient {
     age: number;
     gender: 'MALE' | 'FEMALE';
 
-    Dosha_ids: ['cmfchx8ep000ccmoqglwagbov' | 'cmfchx8ep000dcmoq3nxf2u44' | 'cmfchx8ep000ecmoqsvbuxc9z']; // vata = 'cmfchx8ep000ccmoqglwagbov' pitta = cmfchx8ep000dcmoq3nxf2u44 kapha = cmfchx8ep000ecmoqsvbuxc9z
+    // Dosha_ids: ['cmfchx8ep000ccmoqglwagbov' | 'cmfchx8ep000dcmoq3nxf2u44' | 'cmfchx8ep000ecmoqsvbuxc9z']; // vata = 'cmfchx8ep000ccmoqglwagbov' pitta = cmfchx8ep000dcmoq3nxf2u44 kapha = cmfchx8ep000ecmoqsvbuxc9z
+    Dosha_names: ['Vata' | 'Pitta' | 'Kapha'];
     dietaryHabit: 'VEGETARIAN' | 'VEGAN' | 'NON_VEGETARIAN' | 'EGGITARIAN';
     mealFrequency: number;
     bowelMovement: 'REGULAR' | 'CONSTIPATED' | 'LOOSE';
@@ -34,7 +35,8 @@ const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; 
         height: 0,
         weight: 0,
         gender: 'MALE',
-        Dosha_ids: ['cmfchx8ep000ccmoqglwagbov'],
+        // Dosha_ids: ['cmfchx8ep000ccmoqglwagbov'],
+        Dosha_names: ['Vata'],
         dietaryHabit: 'VEGAN',
         mealFrequency: 3,
         bowelMovement: 'REGULAR',
@@ -128,13 +130,13 @@ const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; 
                         <div>
                             <label className="block text-sm font-medium text-gray-200 mb-2">Dosha</label>
                             <select
-                                value={newPatient.Dosha_ids![0]}
-                                onChange={(e) => setNewPatient({...newPatient, Dosha_ids: [e.target.value as Patient['Dosha_ids'][0]]})}
+                                value={newPatient.Dosha_names![0]}
+                                onChange={(e) => setNewPatient({...newPatient, Dosha_names: [e.target.value as Patient['Dosha_names'][0]]})}
                                 className="w-full px-4 py-3 border border-gray-200 text-white rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
                             >
-                                <option value="cmfchx8ep000ccmoqglwagbov">Vata</option>
-                                <option value="cmfchx8ep000dcmoq3nxf2u44">Pitta</option>
-                                <option value="cmfchx8ep000ecmoqsvbuxc9z">Kapha</option>
+                                <option value="Vata">Vata</option>
+                                <option value="Pitta">Pitta</option>
+                                <option value="Kapha">Kapha</option>
                             </select>                           
                         </div>
                         <div className="grid grid-cols-2 gap-4">

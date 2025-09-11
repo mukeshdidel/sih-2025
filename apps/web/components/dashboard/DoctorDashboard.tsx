@@ -72,7 +72,7 @@ const DoctorDashboard = ({userId}: {userId: string}) => {
         {/* patient list */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 px-4 md:px-10 lg:px-10">
             {
-                patientData.filter( p => (filterStatus === "all" || (filterStatus === "Active" ? p.isActivePatient : !p.isActivePatient)) && (filterDosha === "all" || p.PatientDosha.some(d => d.dosha.name === filterDosha)) && p.patient.name!.toLowerCase().includes(searchText.toLowerCase())).map(p => <div key={p.patient.id}><PatientCard id={p.patient.id!} email={p.patient.email!} name={p.patient.name!} age={p.age} gender={p.gender} /></div> )
+                (Array.isArray(patientData) ? patientData : []).filter( p => (filterStatus === "all" || (filterStatus === "Active" ? p.isActivePatient : !p.isActivePatient)) && (filterDosha === "all" || p.PatientDosha.some(d => d.dosha.name === filterDosha)) && p.patient.name!.toLowerCase().includes(searchText.toLowerCase())).map(p => <div key={p.patient.id}><PatientCard id={p.patient.id!} email={p.patient.email!} name={p.patient.name!} age={p.age} gender={p.gender} /></div> )
             }
         </div>
     </div>

@@ -21,7 +21,7 @@ export const addPatientSchema = z.object({
     weight: z.number().min(0).max(500),
     age: z.number().min(0).max(150),
     gender: z.enum(['MALE', 'FEMALE']),
-    Dosha_ids: z.array(z.string()),
+    Dosha_names: z.array(z.string()),
     dietaryHabit: z.enum(['VEGETARIAN', 'VEGAN', 'NON_VEGETARIAN', 'EGGITARIAN']),
     mealFrequency: z.number().min(1).max(10),
     bowelMovement: z.enum(['REGULAR', 'CONSTIPATED', 'LOOSE']),

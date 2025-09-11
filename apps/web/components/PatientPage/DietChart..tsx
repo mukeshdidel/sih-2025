@@ -4,6 +4,7 @@ import SaveIcon from '../../app/icons/SaveIcon';
 import XIcon from '../../app/icons/XIcon';
 import Button from '../ui/Button';
 import {DietChartType} from '@repo/db/types';
+import SwapIcon from '../../app/icons/SwapIcon';
 
 interface MealPlan {
   breakfast: string;
@@ -22,6 +23,7 @@ const DietChart = ({showDietChart, setShowDietChart, patient_id}: {showDietChart
   const [tempValue, setTempValue] = useState('');
   const [loading, setLoading] = useState(false);
   const [generatedChart, setGeneratedChart] = useState<DietChartType | null>(null);
+  const [selectedMealId, setSelectedMealId] = useState<string | null>(null);
 
 //   const [weeklyPlan, setWeeklyPlan] = useState<WeeklyPlan>({
 //     Monday: {
@@ -170,9 +172,9 @@ const DietChart = ({showDietChart, setShowDietChart, patient_id}: {showDietChart
                                 {!isEditing && (
                                 <button
                                     // onClick={() => handleEdit(day, meal.key, currentValue)}
-                                    className="p-1 hover:bg-white/50 rounded transition-colors duration-200"
+                                    className="p-1 bg-gray-800 cursor-pointer hover:bg-gray-600 rounded transition-colors duration-200"
                                 >
-                                    <PencilIcon />
+                                    <SwapIcon />
                                 </button>
                                 )}
                             </div>

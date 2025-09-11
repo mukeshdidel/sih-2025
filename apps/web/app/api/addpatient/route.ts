@@ -1,5 +1,4 @@
-
-import { prisma } from "@repo/db/client"
+import { prisma } from "@repo/db/client";
 import { getAuthenticatedUser } from "../../../lib/utility/beMiddleware";
 import { addPatientSchema } from "../../../lib/types/zod";
 
@@ -46,6 +45,22 @@ export async function POST(req: Request) {
             return new Response(JSON.stringify({ error: "Patient already associated with this doctor" }), { status: 400 });
         }
 
+        // Map dosha names to IDs (case-insensitive)
+        const doshaRecords = await prisma.dosha.findMany({
+            where: {
+                name: {
+                    in: patientData.Dosha_names.map((name: string) => name.charAt(0).toUpperCase() + name.slice(1).toLowerCase())
+                }
+            },
+            select: { dosha_id: true, name: true }
+        });
+
+        if (doshaRecords.length !== patientData.Dosha_names.length) {
+            return new Response(JSON.stringify({ error: "Invalid dosha name(s)" }), { status: 400 });
+        }
+
+        const doshaIds = doshaRecords.map(d => d.dosha_id);
+
         const dp = await prisma.doctorPatient.create({
             data: {
                 doctor_id: user.id,
@@ -67,7 +82,7 @@ export async function POST(req: Request) {
         });
         
         await prisma.patientDosha.createMany({
-            data: patientData.Dosha_ids.map((dosha_id: string) => ({
+            data: doshaIds.map((dosha_id: string) => ({
                 pd_id: dp.dp_id, 
                 dosha_id,
             }))

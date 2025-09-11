@@ -32,21 +32,15 @@ const layout = ({ children }: { children: ReactNode }) => {
               }
           });
           const data = await res.json();
-          console.log(data);
           dispatch(setPatientData(data));
       } catch (error) {
-          console.log(error);
-          
+        console.log(error);
       }
       setLoading(false)
   }
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
-
-
-    console.log(  token);
-    
 
     if (!token) {
       router.push("/auth/signin");
@@ -72,7 +66,7 @@ const layout = ({ children }: { children: ReactNode }) => {
       <div className="relative flex-1 mt-16">
         <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
         <div className={`h-full ${isOpen ? "lg:ml-80 md:ml-60" : "ml-0 lg:ml-30"} transition-all duration-300 ease-in-out`}>
-          {children}
+          { loading ? <h1 className="font-bold text-xl text-white">Loading...</h1> : children }
         </div>
       </div>
     </div>

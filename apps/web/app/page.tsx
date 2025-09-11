@@ -1,9 +1,21 @@
+"use client";
 import Link from 'next/link';
 import Leaf from './icons/Leaf';
 import UserIcon from './icons/UserIcon';
 import Button from '../components/ui/Button';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 function App() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      router.push("/dashboard");
+    }
+  }, [router]);
+
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col">
       {/* header */}

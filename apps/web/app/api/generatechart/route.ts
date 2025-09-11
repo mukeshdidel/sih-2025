@@ -3,18 +3,18 @@ import { NextResponse } from "next/server";
 import {prisma} from "@repo/db/client"; // adjust path to your prisma client
 import { getAuthenticatedUser } from "../../../lib/utility/beMiddleware";
 
-/**
- * Input type
- */
+
+// Input type
+
 type GenerateBody = {
   patient_id: string; // doctor-patient id
   cuisinePreference?: string[];
-  days?: number; // default = 7
+  days?: number; 
 };
 
-/**
- * Map age → AgeGroup enum
- */
+
+ // Map age → AgeGroup enum
+
 function mapAgeToAgeGroup(age: number): "INFANT" | "CHILD" | "ADOLESCENT" | "ADULT" | "SENIOR" {
   if (age <= 1) return "INFANT";
   if (age <= 12) return "CHILD";
@@ -23,9 +23,8 @@ function mapAgeToAgeGroup(age: number): "INFANT" | "CHILD" | "ADOLESCENT" | "ADU
   return "SENIOR";
 }
 
-/**
- * Map meal frequency → slots
- */
+ // Map meal frequency → slots
+ 
 function mapMealSlots(mealFrequency: number) {
   const freq = Math.max(1, Math.min(4, mealFrequency));
   if (freq === 1) return ["LUNCH"];
@@ -34,9 +33,9 @@ function mapMealSlots(mealFrequency: number) {
   return ["BREAKFAST", "LUNCH", "SNACKS", "DINNER"];
 }
 
-/**
- * Basic rule-based score (dietary habits, digestion, conditions, cuisine pref)
- */
+
+ // Basic rule-based score (dietary habits, digestion, conditions, cuisine pref)
+ 
 function baseRecipeScore({
   recipe,
   recipeFoods,
@@ -97,9 +96,9 @@ function baseRecipeScore({
   return score;
 }
 
-/**
- * Compute nutrients provided by a recipe
- */
+
+ // Compute nutrients provided by a recipe
+ 
 function computeRecipeNutrients(recipeFoods: any[]) {
   const totals: Record<string, number> = {};
   for (const f of recipeFoods) {
@@ -110,9 +109,9 @@ function computeRecipeNutrients(recipeFoods: any[]) {
   return totals;
 }
 
-/**
- * Score recipe based on how well it helps cover missing nutrients
- */
+
+// Score recipe based on how well it helps cover missing nutrients
+ 
 function rdaContributionScore(
   recipeNutrients: Record<string, number>,
   currentTotals: Record<string, number>,
@@ -140,9 +139,9 @@ function rdaContributionScore(
   return score;
 }
 
-/**
- * API: Generate diet chart with day-level RDA balancing
- */
+
+// API: Generate diet chart with day-level RDA balancing
+ 
 export async function POST(req: Request) {
   try {
 
@@ -310,11 +309,7 @@ export async function POST(req: Request) {
   }
 }
 
-/**
- * ----------------------------------------------------
- *  - Future Extensions:
- * ----------------------------------------------------
- * - Multi-day nutrient tracking (rotate nutrients across week)
+/*
  * - Linear programming for exact RDA optimization
  * - Seasonal/availability filters
  * - Patient feedback loop to adjust diet plans

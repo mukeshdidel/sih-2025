@@ -7,7 +7,7 @@ WORKDIR /usr/src/app
 
 COPY . .
 
-RUN bun i
+RUN bun i --verbose
 
 # Ensure Prisma binaries are built for Linux
 RUN bun run db:generate

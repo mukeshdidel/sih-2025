@@ -23,8 +23,8 @@
   },
   "packageManager": "bun@1.2.20",
   "workspaces": [
-    "packages/*",
-    "apps/*"
+    "apps/*",
+    "packages/*"
   ],
   "pipeline": {
     "...": "..."

@@ -43,24 +43,26 @@ const DoctorDashboard = ({userId}: {userId: string}) => {
                     className="w-full px-4 py-3 rounded-lg bg-gray-700 outline-1 outline-gray-500 text-white focus:outline-2 focus:outline-gray-400"
                     placeholder="Search by Name"
                 />
-                <select className="rounded-lg bg-gray-700 outline-1 outline-gray-500 text-white focus:outline-2 focus:outline-gray-400 px-2" value={filterStatus} onChange={(e)=> {setFilterStatus(e.target.value)}}>
-                    <option value="all">All Status</option>
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                </select>
-                <select className="rounded-lg bg-gray-700 outline-1 outline-gray-500 text-white focus:outline-2 focus:outline-gray-400 px-2" value={filterDosha} onChange={(e)=> {setFilterDosha(e.target.value)}}>
-                    <option value="all">All Doshas</option>
-                    <option value="Vata">Vata</option>
-                    <option value="Pitta">Pitta</option>
-                    <option value="Kapha">Kapha</option>
-                </select>
+                <div className="flex gap-4 mt-4 lg:mt-0 p-2">
+                    <select className="rounded-lg bg-gray-700 outline-1 outline-gray-500 text-white focus:outline-2 focus:outline-gray-400 px-2 p-2" value={filterStatus} onChange={(e)=> {setFilterStatus(e.target.value)}}>
+                        <option value="all">All Status</option>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                    <select className="rounded-lg bg-gray-700 outline-1 outline-gray-500 text-white focus:outline-2 focus:outline-gray-400 px-2 p-2" value={filterDosha} onChange={(e)=> {setFilterDosha(e.target.value)}}>
+                        <option value="all">All Doshas</option>
+                        <option value="Vata">Vata</option>
+                        <option value="Pitta">Pitta</option>
+                        <option value="Kapha">Kapha</option>
+                    </select>
+                </div>
             </div>
-            <div className="flex justify-center items-center">
+            <div className="flex justify-center items-center mb-4 lg:mb-0">
                 <Button variant="primary" size="md" onClick={()=>{setShowAddModal(true)}}  ><div className="flex gap-2 justify-center items-center"><PlusIcon /><p>Add Patient</p></div></Button>
             </div>
         </div>
         {/* extra content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8 px-4 md:px-10 lg:px-10 md:py-6 lg:py-8">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 mb-8 px-4 md:px-10 lg:px-10 md:py-6 lg:py-8">
             <StatOverview text="Total Patients" number={patientData.length} Icon={<UserIcon2 />} />
             <StatOverview text="Total Active" number={patientData.filter(p => p.isActivePatient).length} Icon={<Clock2 />} />
             <StatOverview text="Total Vata imbalanced" number={patientData.filter(p => p.PatientDosha.some(d => d.dosha.name === "Vata")).length} Icon={<WindIcon />} />

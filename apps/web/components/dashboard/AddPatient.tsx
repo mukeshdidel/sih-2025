@@ -31,6 +31,7 @@ const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; 
 
 
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
     const [newPatient, setNewPatient] = useState<Partial<Patient>>({
         email: '',
@@ -62,11 +63,15 @@ const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; 
                 },
                 body: JSON.stringify(newPatient),
             });
+            const data = await res.json();
             if (res.ok) {
                 setShowAddModal(false);
             }
+            else {
+                setError(data.error || 'Failed to add patient');
+            }
         } catch (error) {
-            
+            console.error("Error adding patient:", error);
         }
         finally {
             setLoading(false);
@@ -98,6 +103,11 @@ const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; 
                 </div> */}
 
                 <div className="p-8">
+                <h1>
+                    {
+                        error ? <p className=" text-red-400 text-center p-2 ">{error}</p> : null
+                    }
+                </h1>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div className="space-y-6">
                     <div className="bg-slate-400 p-6 rounded-xl border border-gray-600">

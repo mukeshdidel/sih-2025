@@ -15,6 +15,7 @@ const page = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
     const router = useRouter();
 
@@ -35,7 +36,8 @@ const page = () => {
                 localStorage.setItem("authToken", data.token);
                 router.push("/dashboard");
             } else {
-                console.error("Sign up failed:", data.message);
+                setError(data.error || "Sign up failed");
+                console.error("Sign up failed:", data.error);
             }
             
         } catch (error) {
@@ -57,6 +59,7 @@ const page = () => {
                         <Button variant={!isDoctor ? "primary" : "secondary"} size="md" onClick={() => setIsDoctor(false)} >Patient</Button>
                     </div>
                     <div className="space-y-6">
+                        {error && <div className="text-red-500 mb-4">{error}</div>}
                         <Input label="Name" type="text" placeholder="Your Name" value={name} onChange={(e) => setName(e.target.value)} />
                         <Input label="Email" type="email" placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
                         <Input label="Password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />

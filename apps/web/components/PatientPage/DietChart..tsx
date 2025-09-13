@@ -24,7 +24,7 @@ const DietChart = ({showDietChart, setShowDietChart, patient_id}: {showDietChart
   const [loading, setLoading] = useState(false);
   const [generatedChart, setGeneratedChart] = useState<DietChartType | null>(null);
   const [selectedMealId, setSelectedMealId] = useState<string | null>(null);
-
+  const [error, setError] = useState("");
 //   const [weeklyPlan, setWeeklyPlan] = useState<WeeklyPlan>({
 //     Monday: {
 //       breakfast: 'Oatmeal with berries and nuts',
@@ -121,8 +121,12 @@ const DietChart = ({showDietChart, setShowDietChart, patient_id}: {showDietChart
                 console.log(data.chart);    
             }
 
-        } catch (error) {
+            if(!res.ok){
+                setError(data.error || 'Failed to generate chart');
+            }
 
+        } catch (error) {
+            console.error("Error generating chart:", error);
         } finally {
             setLoading(false);
         }

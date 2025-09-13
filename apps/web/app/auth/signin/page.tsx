@@ -12,6 +12,7 @@ const page = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
     const router = useRouter();
     
@@ -34,6 +35,7 @@ const page = () => {
                 router.push("/dashboard");
             } else {
                 console.error("Sign in failed:", data.message);
+                setError(data.error || "Sign in failed");
             }
             
         } catch (error) {
@@ -52,6 +54,7 @@ const page = () => {
                     <h2 className="text-3xl font-light text-gray-800 mb-2 text-center">Sign In</h2>
                     <p className="text-gray-600 text-center mb-8">Please enter your credentials</p>
                     <div className="space-y-6">
+                        {error && <div className="text-red-500 mb-4">{error}</div>}
                         <Input label="Email" type="email" placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
                         <Input label="Password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
                         <button

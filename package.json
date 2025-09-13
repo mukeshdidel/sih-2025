@@ -10,7 +10,7 @@
     "docker:start": "bun run db:migrate && bun run db:seed && bun run build && bun run web:start",
     "db:migrate": "cd packages/db && bunx prisma migrate deploy",
     "db:seed": "bun run packages/db/src/truncate.ts &&  bun run packages/db/src/coreSeed.ts && bun run packages/db/src/foodseed1.ts && bun run packages/db/src/cuisine.ts && bun run packages/db/src/rec.ts",
-    "db:generate": "cd packages/db && bunx prisma generate",
+    "db:generate": "cd packages/db && bunx prisma generate cd ../..",
     "web:start": "cd apps/web && bun run start"
   },
   "devDependencies": {

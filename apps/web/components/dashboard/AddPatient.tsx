@@ -29,6 +29,9 @@ interface Patient {
 
 const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; setShowAddModal: (show: boolean) => void; }) => {
 
+
+    const [loading, setLoading] = useState(false);
+
     const [newPatient, setNewPatient] = useState<Partial<Patient>>({
         email: '',
         age: 0,
@@ -49,6 +52,8 @@ const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; 
 
     async function handleAddPatient() {
         try {
+            if(loading) return;
+            setLoading(true);
             const res =  await fetch('/api/addpatient', {
                 method: 'POST',
                 headers: {
@@ -57,14 +62,20 @@ const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; 
                 },
                 body: JSON.stringify(newPatient),
             });
+            if (res.ok) {
+                setShowAddModal(false);
+            }
         } catch (error) {
             
+        }
+        finally {
+            setLoading(false);
         }
     }
 
     return showAddModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-            <div className="bg-gray-500 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-slate-500 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
 
                 {/* <div className="bg-green-800 p-6 rounded-t-2xl">
                 <div className="flex items-center justify-between">
@@ -89,8 +100,8 @@ const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; 
                 <div className="p-8">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div className="space-y-6">
-                    <div className="bg-gray-800 p-6 rounded-xl border border-gray-600">
-                        <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+                    <div className="bg-slate-400 p-6 rounded-xl border border-gray-600">
+                        <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                         <UserIcon2  />
                         <p className="ml-2">Personal Information</p>
                         </h3>
@@ -99,11 +110,11 @@ const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; 
                         <div className="grid grid-cols-2 gap-4">
                             <Input label="Age *" value={newPatient.age!} onChange={(e) => setNewPatient({...newPatient, age: parseInt(e.target.value)})} placeholder="Age" type="number" />
                             <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">Gender</label>
+                            <label className="block text-sm font-medium text-gray-800 mb-2">Gender</label>
                             <select
                                 value={newPatient.gender}
                                 onChange={(e) => setNewPatient({...newPatient, gender: e.target.value as Patient['gender']})}
-                                className="w-full px-4 py-3 border border-gray-200 text-white rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                className="w-full px-4 py-3 border border-gray-800 text-gray-800 rounded-xl focus:ring-2 focus:border-transparent"
                             >
                                 <option value="MALE">Male</option>
                                 <option value="FEMALE">Female</option>
@@ -120,19 +131,19 @@ const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; 
 
                         </div>
                     </div>
-                        
-                    <div className="bg-gray-800 p-6 rounded-xl border border-gray-600">
-                        <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+
+                    <div className="bg-slate-400 p-6 rounded-xl border border-gray-600">
+                        <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                         <Leaf />
                         <p className="ml-2">Ayurvedic Constitution</p>
                         </h3>
                         <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-200 mb-2">Dosha</label>
+                            <label className="block text-sm font-medium text-gray-800 mb-2">Dosha</label>
                             <select
                                 value={newPatient.Dosha_names![0]}
                                 onChange={(e) => setNewPatient({...newPatient, Dosha_names: [e.target.value as Patient['Dosha_names'][0]]})}
-                                className="w-full px-4 py-3 border border-gray-200 text-white rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                className="w-full px-4 py-3 border border-gray-200 text-gray-800 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
                             >
                                 <option value="Vata">Vata</option>
                                 <option value="Pitta">Pitta</option>
@@ -141,22 +152,22 @@ const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; 
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                            <label className="block text-sm font-medium text-gray-200 mb-2">Status</label>
+                            <label className="block text-sm font-medium text-gray-800 mb-2">Status</label>
                             <select
                                 value={newPatient.status}
                                 onChange={(e) => setNewPatient({...newPatient, status: e.target.value as Patient['status']})}
-                                className="w-full px-4 py-3 border border-gray-200 text-white rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                className="w-full px-4 py-3 border border-gray-200 text-gray-800 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
                             >
                                 <option value="Active">Active</option>
                                 <option value="Inactive">Inactive</option>
                             </select>
                             </div>
                             <div>
-                            <label className="block text-sm font-medium text-gray-200 mb-2">Priority</label>
+                            <label className="block text-sm font-medium text-gray-800 mb-2">Priority</label>
                             <select
                                 value={newPatient.priority}
                                 onChange={(e) => setNewPatient({...newPatient, priority: e.target.value as Patient['priority']})}
-                                className="w-full px-4 py-3 border border-gray-200 text-white rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                className="w-full px-4 py-3 border border-gray-200 text-gray-800 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
                             >
                                 <option value="low">Low</option>
                                 <option value="medium">Medium</option>
@@ -170,18 +181,18 @@ const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; 
 
                     {/* Ayurvedic Assessment */}
                     <div className="space-y-6">                
-                    <div className="bg-gray-800 p-6 rounded-xl border border-gray-600">
+                    <div className="bg-slate-400 p-6 rounded-xl border border-gray-600">
                         <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
                         <Utensils />
                         <p className="ml-2">Dietary & Lifestyle</p>
                         </h3>
                         <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-200 mb-2">Dietary Habits</label>
+                            <label className="block text-sm font-medium text-gray-800 mb-2">Dietary Habits</label>
                             <select
                             value={newPatient.dietaryHabit}
                             onChange={(e) => setNewPatient({...newPatient, dietaryHabit: e.target.value as Patient['dietaryHabit']})}
-                            className="w-full px-4 py-3 border border-gray-200 text-white rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                            className="w-full px-4 py-3 border border-gray-200 text-gray-800 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                             >
                             <option value="VEGETARIAN">Vegetarian</option>
                             <option value="VEGAN">Vegan</option>
@@ -191,34 +202,34 @@ const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; 
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                            <label className="block text-sm font-medium text-gray-200 mb-2">Meals per Day</label>
+                            <label className="block text-sm font-medium text-gray-800 mb-2">Meals per Day</label>
                             <input
                                 type="number"
                                 min="1"
                                 max="6"
                                 value={newPatient.mealFrequency}
                                 onChange={(e) => setNewPatient({...newPatient, mealFrequency: parseInt(e.target.value)})}
-                                className="w-full px-4 py-3 border border-gray-200 text-white rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                className="w-full px-4 py-3 border border-gray-200 text-gray-800 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                             />
                             </div>
                             <div>
-                            <label className="block text-sm font-medium text-gray-200 mb-2">Water Intake (L/day)</label>
+                            <label className="block text-sm font-medium text-gray-800 mb-2">Water Intake (L/day)</label>
                             <input
                                 type="number"
                                 min="0"
                                 max="10"
                                 value={newPatient.waterIntake}
                                 onChange={(e) => setNewPatient({...newPatient, waterIntake: parseFloat(e.target.value)})}
-                                className="w-full px-4 py-3 border border-gray-200 text-white rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                className="w-full px-4 py-3 border border-gray-200 text-gray-800 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                             />
                             </div>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-200 mb-2">Bowel Movements</label>
+                            <label className="block text-sm font-medium text-gray-800 mb-2">Bowel Movements</label>
                             <select
                             value={newPatient.bowelMovement}
                             onChange={(e) => setNewPatient({...newPatient, bowelMovement: e.target.value as Patient['bowelMovement']})}
-                            className="w-full px-4 py-3 border border-gray-200 text-white rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                            className="w-full px-4 py-3 border border-gray-200 text-gray-800 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                             >
                             <option value="REGULAR">Regular</option>
                             <option value="CONSTIPATED">Constipated</option>
@@ -226,11 +237,11 @@ const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; 
                             </select>
                         </div>
                          <div>
-                            <label className="block text-sm font-medium text-gray-200 mb-2">Digestion Quality</label>
+                            <label className="block text-sm font-medium text-gray-800 mb-2">Digestion Quality</label>
                             <select
                             value={newPatient.digestionQuality}
                             onChange={(e) => setNewPatient({...newPatient, digestionQuality: e.target.value as Patient['digestionQuality']})}
-                            className="w-full px-4 py-3 border border-gray-200 text-white rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                            className="w-full px-4 py-3 border border-gray-200 text-gray-800 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                             >
                                 <option value="EXCELLENT">Excellent</option>
                                 <option value="GOOD">Good</option>
@@ -244,7 +255,7 @@ const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; 
                 </div>
 
                 
-                <div className="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-200">
+                <div className="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-800">
                     <Button
                         size="md"
                         variant="secondary" 
@@ -257,7 +268,7 @@ const AddPatient = ({ showAddModal, setShowAddModal }: { showAddModal: boolean; 
                         size="md"
                         onClick={handleAddPatient}
                     >
-                        Add Patient
+                        {loading ? 'Adding...' : 'Add Patient'}
                     </Button>
                 </div>
                 </div>

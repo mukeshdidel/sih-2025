@@ -132,7 +132,7 @@ const DietChart = ({showDietChart, setShowDietChart, patient_id}: {showDietChart
 
     return ( showDietChart && <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
         <div 
-        className="bg-gray-700 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative border border-gray-300"
+        className="bg-slate-400 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative border border-gray-300"
         >
             {/* header */}
             <div className="absolute bg-gray-500 top-0 right-0 rounded-t-2xl flex justify-between p-4 w-full border-b border-gray-300">
@@ -141,7 +141,7 @@ const DietChart = ({showDietChart, setShowDietChart, patient_id}: {showDietChart
                 </div>
                 <div className='flex gap-2'>
                     <Button variant="secondary" size='sm' onClick={() => setShowDietChart(false)}>Close</Button>
-                    <Button variant='primary' size='sm' onClick={()=>{}} >Save Changes</Button>
+                    {/* <Button variant='primary' size='sm' onClick={()=>{}} >Save Changes</Button> */}
                 </div>
 
             </div>
@@ -151,12 +151,12 @@ const DietChart = ({showDietChart, setShowDietChart, patient_id}: {showDietChart
                 generatedChart !== null ? <div className="p-6 pt-24 overflow-y-auto max-h-[calc(80vh-80px)]">
                 <div className="grid gap-6">
                 {days.map((day) => (
-                    <div key={day} className="bg-slate-700 rounded-lg p-4 border border-gray-200">
+                    <div key={day} className="bg-slate-400 rounded-lg p-4 border border-gray-200">
                     <h3 className="text-lg font-semibold text-white mb-4 border-b border-gray-300 pb-2 ">
                         {day}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        {generatedChart.mealSlots.map((mealTime) => {
+                        {generatedChart.mealSlots.map((mealTime: any) => {
                         const cellId = `${day}-${mealTime}`;
                         const isEditing = editingCell === cellId;
                         const weekDayIndex = days.indexOf(day); // 0 for Monday, 1 for Tuesday, etc.
@@ -166,16 +166,17 @@ const DietChart = ({showDietChart, setShowDietChart, patient_id}: {showDietChart
                         const currentValue = recipeObj?.recipe?.name || "No meal";
 
                         return (
-                            <div key={mealTime} className={`p-4 rounded-lg border-2 transition-all duration-200 hover:shadow-md bg-gray-700`}>
+                            <div key={mealTime} className={`p-4 rounded-lg border-2 transition-all duration-200 hover:shadow-md bg-gray-500`}>
                             <div className="flex items-center justify-between mb-2">
                                 <h4 className="font-medium text-sm uppercase tracking-wide">{mealTime}</h4>
                                 {!isEditing && (
-                                <button
-                                    // onClick={() => handleEdit(day, meal.key, currentValue)}
-                                    className="p-1 bg-gray-800 cursor-pointer hover:bg-gray-600 rounded transition-colors duration-200"
-                                >
-                                    <SwapIcon />
-                                </button>
+                                    null
+                                // <button
+                                //     // onClick={() => handleEdit(day, meal.key, currentValue)}
+                                //     className="p-1 bg-gray-800 cursor-pointer hover:bg-gray-600 rounded transition-colors duration-200"
+                                // >
+                                //     <SwapIcon />
+                                // </button>
                                 )}
                             </div>
                             {isEditing ? (

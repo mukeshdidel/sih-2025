@@ -35,21 +35,21 @@ const DoctorDashboard = ({userId}: {userId: string}) => {
         <AddPatient showAddModal={showAddModal} setShowAddModal={setShowAddModal} />
         {/* search and add patient */}
         <div className="flex flex-col md:flex-row lg:flex-row md:justify-between lg:justify-around px-4 md:px-10 lg:px-10 gap-4">
-            <div className="bg-gray-700 p-4 flex-1  my-4 sm:flex sm:lex-col gap-4 rounded-2xl">
+            <div className="bg-slate-500 p-4 flex-1  my-4 sm:flex sm:lex-col gap-4 rounded-2xl">
                 <input
                     type="text"
                     value={searchText}
                     onChange={(e)=>{setSearchText(e.target.value)}}
-                    className="w-full px-4 py-3 rounded-lg bg-gray-700 outline-1 outline-gray-500 text-white focus:outline-2 focus:outline-gray-400"
+                    className="w-full px-4 py-3 rounded-lg bg-gray-600 outline-1 outline-gray-500 text-white focus:outline-2 focus:outline-gray-400"
                     placeholder="Search by Name"
                 />
                 <div className="flex gap-4 mt-4 lg:mt-0 p-2">
-                    <select className="rounded-lg bg-gray-700 outline-1 outline-gray-500 text-white focus:outline-2 focus:outline-gray-400 px-2 p-2" value={filterStatus} onChange={(e)=> {setFilterStatus(e.target.value)}}>
+                    <select className="rounded-lg bg-gray-600 outline-1 outline-gray-500 text-white focus:outline-2 focus:outline-gray-400 px-2 p-2" value={filterStatus} onChange={(e)=> {setFilterStatus(e.target.value)}}>
                         <option value="all">All Status</option>
                         <option value="Active">Active</option>
                         <option value="Inactive">Inactive</option>
                     </select>
-                    <select className="rounded-lg bg-gray-700 outline-1 outline-gray-500 text-white focus:outline-2 focus:outline-gray-400 px-2 p-2" value={filterDosha} onChange={(e)=> {setFilterDosha(e.target.value)}}>
+                    <select className="rounded-lg bg-gray-600 outline-1 outline-gray-500 text-white focus:outline-2 focus:outline-gray-400 px-2 p-2" value={filterDosha} onChange={(e)=> {setFilterDosha(e.target.value)}}>
                         <option value="all">All Doshas</option>
                         <option value="Vata">Vata</option>
                         <option value="Pitta">Pitta</option>
@@ -62,17 +62,17 @@ const DoctorDashboard = ({userId}: {userId: string}) => {
             </div>
         </div>
         {/* extra content */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 mb-8 px-4 md:px-10 lg:px-10 md:py-6 lg:py-8">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-1 mb-8 px-4 md:px-10 lg:px-10 md:py-6 lg:py-8">
             <StatOverview text="Total Patients" number={patientData.length} Icon={<UserIcon2 />} />
             <StatOverview text="Total Active" number={patientData.filter(p => p.isActivePatient).length} Icon={<Clock2 />} />
-            <StatOverview text="Total Vata imbalanced" number={patientData.filter(p => p.PatientDosha.some(d => d.dosha.name === "Vata")).length} Icon={<WindIcon />} />
-            <StatOverview text="Total Pitta imbalanced" number={patientData.filter(p => p.PatientDosha.some(d => d.dosha.name === "Pitta")).length} Icon={<FireIcon />} />
-            <StatOverview text="Total Kapha imbalanced" number={patientData.filter(p => p.PatientDosha.some(d => d.dosha.name === "Kapha")).length} Icon={<Leaf />} />
+            <StatOverview text="Total Vata imbalanced" number={patientData.filter(p => p.PatientDosha.some((d: any) => d.dosha.name === "Vata")).length} Icon={<WindIcon />} />
+            <StatOverview text="Total Pitta imbalanced" number={patientData.filter(p => p.PatientDosha.some((d: any) => d.dosha.name === "Pitta")).length} Icon={<FireIcon />} />
+            <StatOverview text="Total Kapha imbalanced" number={patientData.filter(p => p.PatientDosha.some((d: any) => d.dosha.name === "Kapha")).length} Icon={<Leaf />} />
         </div>
         {/* patient list */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 px-4 md:px-10 lg:px-10">
             {
-                (Array.isArray(patientData) ? patientData : []).filter( p => (filterStatus === "all" || (filterStatus === "Active" ? p.isActivePatient : !p.isActivePatient)) && (filterDosha === "all" || p.PatientDosha.some(d => d.dosha.name === filterDosha)) && p.patient.name!.toLowerCase().includes(searchText.toLowerCase())).map(p => <div key={p.patient.id}><PatientCard id={p.patient.id!} email={p.patient.email!} name={p.patient.name!} age={p.age} gender={p.gender} /></div> )
+                (Array.isArray(patientData) ? patientData : []).filter( p => (filterStatus === "all" || (filterStatus === "Active" ? p.isActivePatient : !p.isActivePatient)) && (filterDosha === "all" || p.PatientDosha.some((d: any) => d.dosha.name === filterDosha)) && p.patient.name!.toLowerCase().includes(searchText.toLowerCase())).map(p => <div key={p.patient.id}><PatientCard id={p.patient.id!} email={p.patient.email!} name={p.patient.name!} age={p.age} gender={p.gender} /></div> )
             }
         </div>
     </div>

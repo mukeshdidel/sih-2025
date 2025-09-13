@@ -41,7 +41,7 @@ const HealthMetricsCard= ({ patientData}: { patientData: DoctorPatientType }) =>
   const bmiInfo = getBMICategory(parseFloat(bmi));
 
   return (
-    <div className="bg-gray-700 rounded-xl shadow-sm border border-gray-500 p-6">
+    <div className="bg-slate-500 rounded-xl shadow-sm border border-gray-500 p-6">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-3 text-green-600">
           <ActivityIcon />

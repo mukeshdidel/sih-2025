@@ -28,7 +28,7 @@ const page = () => {
     return (
         <div className="h-full text-white px-4 md:px-10 lg:px-10 mt-10">
             <DietChart setShowDietChart={setShowShowDietChart} showDietChart={showDietChart} patient_id={params.slug as string} />
-            <div className="rounded-2xl bg-gray-700 p-4 lg:p-6 ">
+            <div className="rounded-2xl bg-slate-500 p-4 lg:p-6 ">
                 <div className="flex justify-between items-center mb-4 flex-wrap">
                     <div className="flex gap-2">
                         <div className="bg-green-400 p-4 rounded-full">

@@ -10,8 +10,8 @@ interface ButtonProps {
 const Button = ({ children, onClick, variant, size }: ButtonProps) => {
 
     const variantMap = new Map<string, string>();
-    variantMap.set("primary", "bg-green-500 text-gray-900 hover:bg-green-400");
-    variantMap.set("secondary", "bg-gray-900 text-green-400 border border-green-500 hover:bg-green-500 hover:text-gray-900");
+    variantMap.set("primary", "bg-blue-500 border border-gray-700 text-gray-700 hover:bg-blue-600 hover:text-gray-900");
+    variantMap.set("secondary", "bg-slate-400 text-stone-700 border border-stone-700 hover:bg-blue-500 hover:text-gray-900");
 
 
     const sizeMap = new Map<string, string>();
@@ -22,7 +22,7 @@ const Button = ({ children, onClick, variant, size }: ButtonProps) => {
     return (
       <button
         onClick={onClick}
-        className={`rounded-full font-medium transition-colors cursor-pointer ${variantMap.get(variant)} ${size ? sizeMap.get(size) : sizeMap.get("md")}`}
+        className={`rounded-lg font-medium transition-colors cursor-pointer ${variantMap.get(variant)} ${size ? sizeMap.get(size) : sizeMap.get("md")}`}
       >
       {children}
     </button>

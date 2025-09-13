@@ -61,7 +61,7 @@ const layout = ({ children }: { children: ReactNode }) => {
   
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-900 bg-fixed">
+    <div className="min-h-screen flex flex-col bg-slate-400 bg-fixed">
       <Topbar setIsOpen={setIsOpen} isOpen={isOpen} />
       <div className="relative flex-1 mt-16">
         <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />

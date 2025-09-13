@@ -23,18 +23,18 @@ const PatientCard = ({name, age, gender, email, id}: {name: string; age: number;
     const getStatusIcon = (status: "active" | "inactive") => {
     switch (status) {
       case 'active':
-        return <div className="text-green-500"><CheckCircle /></div>;
+        return <div className="text-blue-500"><CheckCircle /></div>;
       case 'inactive':
-        return <div className="text-gray-400"><Clock /></div>;
+        return <div className="text-gray-800"><Clock /></div>;
     }
   };
 
   return (
-    <div className="bg-gray-700 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border  overflow-hidden p-6">
+    <div className="bg-slate-500 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border  border-white overflow-hidden p-6">
         <div className="flex items-start justify-between mb-4">
             <div className="flex-1">
                 <h3 className="text-xl font-bold text-white mb-1">{name}</h3>
-                <p className="text-sm text-gray-400">{age} years • {gender}</p>
+                <p className="text-sm text-gray-300">{age} years • {gender}</p>
             </div>
             <div className="flex flex-col items-end space-y-2">
                 <span className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full  text-xs font-medium border ${getStatusColor("active")}`}>
@@ -46,7 +46,7 @@ const PatientCard = ({name, age, gender, email, id}: {name: string; age: number;
         <div className="space-y-2 mb-4">
             <div className="flex items-center space-x-2 text-sm text-green-500">
                 <MailIcon />
-                <span className="truncate text-gray-400">{email}</span>
+                <span className="truncate text-gray-200">{email}</span>
             </div>
         </div>
         <div className="flex justify-start gap-4">

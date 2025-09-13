@@ -1,32 +1,37 @@
-version: '3.8'
-
 services:
   db:
-    image: postgres:16
-    restart: always
+    image: postgres:15
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: sih
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: sihappdb
+    volumes:
+      - sih_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-    volumes:
-      - db_data:/var/lib/postgresql/data
 
-  app:
+  migrate:
     build:
       context: .
-      dockerfile: ./docker/dev/dockerfile.fe
+      dockerfile: docker/dev/dockerfile.fe
+    command: bun prisma migrate deploy --schema=packages/db/prisma/schema.prisma
     environment:
-      DATABASE_URL: postgres://postgres:postgres@db:5432/sih
-      JWT_SECRET: your_jwt_secret
+      DATABASE_URL: postgres://user:pass@db:5432/sihappdb
     depends_on:
       - db
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/dev/dockerfile.fe
+    command: sh -c "cd apps/web && bun next start"
     ports:
       - "3000:3000"
-    volumes:
-      - .:/usr/src/app
-    command: [ "bun", "run", "docker:start" ]
+    environment:
+      DATABASE_URL: postgres://user:pass@db:5432/sihappdb
+      JWT_SECRET: your_jwt_secret
+    depends_on:
+      - migrate
 
 volumes:
-  db_data:
+  sih_data:

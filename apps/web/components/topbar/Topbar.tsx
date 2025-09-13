@@ -10,7 +10,7 @@ const Topbar = ({setIsOpen, isOpen}: {setIsOpen: (isOpen: boolean) => void, isOp
     // todo add profile icon and dropdown
 
     return (
-        <div className=" h-16 bg-gray-800 border-b border-slate-700 flex items-center justify-between px-4 fixed top-0 left-0 w-screen z-40">
+        <div className=" h-16 bg-slate-500 border-b border-slate-700 flex items-center justify-between px-4 fixed top-0 left-0 w-screen z-40">
             <div className="flex gap-2">
                 <div className="text-white cursor-pointer lg:ml-6 p-2 rounded-md hover:bg-gray-700" onClick={() => {setIsOpen(!isOpen)}}>
                     <ThreeLines />

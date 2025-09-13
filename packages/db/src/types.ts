@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 
-
+// @ts-ignore
 export type DoctorPatientType = Prisma.DoctorPatientGetPayload<{
     include: {
         patient: {
@@ -18,7 +18,7 @@ export type DoctorPatientType = Prisma.DoctorPatientGetPayload<{
     }
 }>;
 
-
+// @ts-ignore
 export type DietChartType = Prisma.DietChartGetPayload<{
     include: {
     DietChartRecipe: {

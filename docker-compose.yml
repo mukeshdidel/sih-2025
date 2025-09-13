@@ -24,7 +24,7 @@ services:
     build:
       context: .
       dockerfile: docker/dev/dockerfile.fe
-    command: sh -c "cd apps/web && bun next start"
+    command: sh -c "bun run db:seed && cd apps/web && bun next start"
     ports:
       - "3000:3000"
     environment:

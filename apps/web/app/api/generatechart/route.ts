@@ -1,19 +1,18 @@
-// app/api/generateDietChart/route.ts
+
 import { NextResponse } from "next/server";
-import {prisma} from "@repo/db/client"; // adjust path to your prisma client
+import {prisma} from "@repo/db/client"; 
 import { getAuthenticatedUser } from "../../../lib/utility/beMiddleware";
 
 
 // Input type
 
 type GenerateBody = {
-  patient_id: string; // doctor-patient id
+  patient_id: string; 
   cuisinePreference?: string[];
   days?: number; 
 };
 
 
- // Map age → AgeGroup enum
 
 function mapAgeToAgeGroup(age: number): "INFANT" | "CHILD" | "ADOLESCENT" | "ADULT" | "SENIOR" {
   if (age <= 1) return "INFANT";
@@ -23,8 +22,7 @@ function mapAgeToAgeGroup(age: number): "INFANT" | "CHILD" | "ADOLESCENT" | "ADU
   return "SENIOR";
 }
 
- // Map meal frequency → slots
- 
+
 function mapMealSlots(mealFrequency: number) {
   const freq = Math.max(1, Math.min(4, mealFrequency));
   if (freq === 1) return ["LUNCH"];
@@ -34,7 +32,7 @@ function mapMealSlots(mealFrequency: number) {
 }
 
 
- // Basic rule-based score (dietary habits, digestion, conditions, cuisine pref)
+ // rule-based scoring
  
 function baseRecipeScore({
   recipe,
@@ -97,7 +95,6 @@ function baseRecipeScore({
 }
 
 
- // Compute nutrients provided by a recipe
  
 function computeRecipeNutrients(recipeFoods: any[]) {
   const totals: Record<string, number> = {};
@@ -110,8 +107,7 @@ function computeRecipeNutrients(recipeFoods: any[]) {
 }
 
 
-// Score recipe based on how well it helps cover missing nutrients
- 
+
 function rdaContributionScore(
   recipeNutrients: Record<string, number>,
   currentTotals: Record<string, number>,
@@ -127,11 +123,9 @@ function rdaContributionScore(
     const contribution = recipeNutrients[req.nutrient_id] ?? 0;
 
     if (missing > 0 && contribution > 0) {
-      // reward if recipe contributes to missing nutrient
       const fillRatio = Math.min(1, contribution / missing);
-      score += 5 * fillRatio; // partial credit
+      score += 5 * fillRatio; 
     } else if (current > target * 1.5 && contribution > 0) {
-      // penalize over-supplying
       score -= 2;
     }
   }
@@ -140,8 +134,7 @@ function rdaContributionScore(
 }
 
 
-// API: Generate diet chart with day-level RDA balancing
- 
+
 export async function POST(req: Request) {
   try {
 
@@ -176,7 +169,7 @@ export async function POST(req: Request) {
 
     if (!dp_id) return NextResponse.json({ error: "dp_id required" }, { status: 400 });
 
-    // fetch doctor-patient record
+
     const dp = await prisma.doctorPatient.findUnique({
       where: { dp_id },
       include: {
@@ -192,7 +185,6 @@ export async function POST(req: Request) {
 
     const mealSlots = mapMealSlots(dp.mealFrequency);
 
-    // fetch RDA requirements
     const rdaRequirements = await prisma.rda.findMany({
       where: {
         gender: dp.gender,
@@ -200,7 +192,6 @@ export async function POST(req: Request) {
       },
     });
 
-    // fetch recipes with nutrition
     const recipes = await prisma.recipe.findMany({
       include: {
         Cuisine: true,
@@ -219,7 +210,6 @@ export async function POST(req: Request) {
 
     if (!recipes.length) return NextResponse.json({ error: "No recipes available" }, { status: 400 });
 
-    // preprocess: compute nutrients for each recipe
     const scored = recipes
       .map((r) => {
         const foods = r.RecipeIngredient.map((ri: any) => ri.food);
@@ -239,7 +229,6 @@ export async function POST(req: Request) {
       })
       .filter((s) => s.baseScore > -1000);
 
-    // create chart
     const chart = await prisma.dietChart.create({
       data: {
         db_id: dp_id,
@@ -247,10 +236,9 @@ export async function POST(req: Request) {
       },
     });
 
-    // --- build plan day by day ---
     for (let day = 0; day < days; day++) {
     const dailyTotals: Record<string, number> = {};
-    const usedRecipes = new Set<string>(); // ✅ track recipes used that day
+    const usedRecipes = new Set<string>();
 
     for (const meal of mealSlots) {
         const ranked = scored
@@ -258,21 +246,18 @@ export async function POST(req: Request) {
             const rdaScore = rdaContributionScore(s.recipeNutrients, dailyTotals, rdaRequirements);
             return { ...s, score: s.baseScore + rdaScore + Math.random() * 0.01 };
         })
-        .filter((s) => !usedRecipes.has(s.recipe.recipe_id)) // ✅ skip if already used
+        .filter((s) => !usedRecipes.has(s.recipe.recipe_id))
         .sort((a, b) => b.score - a.score);
 
         const pick = ranked[0];
         if (!pick) continue;
 
-        // update daily totals
         for (const [nutrient, value] of Object.entries(pick.recipeNutrients)) {
         dailyTotals[nutrient] = (dailyTotals[nutrient] ?? 0) + value;
         }
 
-        // mark recipe as used
         usedRecipes.add(pick.recipe.recipe_id);
 
-        // save selection
         await prisma.dietChartRecipe.create({
         data: {
             chart_id: chart.chart_id,
@@ -308,10 +293,5 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: err?.message ?? "unknown error" }, { status: 500 });
   }
 }
+ 
 
-/*
- * - Linear programming for exact RDA optimization
- * - Seasonal/availability filters
- * - Patient feedback loop to adjust diet plans
- * - Dynamic portion sizing based on energy needs (TDEE)
- */

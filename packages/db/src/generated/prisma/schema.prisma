@@ -1,0 +1,347 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum DietaryHabits {
+  VEGETARIAN
+  VEGAN
+  NON_VEGETARIAN
+  EGGITARIAN
+}
+
+enum BowelMovement {
+  REGULAR
+  CONSTIPATED
+  LOOSE
+}
+
+enum DigestionQuality {
+  EXCELLENT
+  GOOD
+  AVERAGE
+  POOR
+}
+
+model Doctor {
+  id            String          @id @default(cuid())
+  email         String          @unique
+  name          String?
+  password      String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  DoctorPatient DoctorPatient[]
+}
+
+model Patient {
+  id            String          @id @default(cuid())
+  email         String          @unique
+  name          String?
+  password      String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  DoctorPatient DoctorPatient[]
+}
+
+enum Priority {
+  low
+  medium
+  high
+}
+
+model DoctorPatient {
+  dp_id           String  @id @default(cuid())
+  doctor_id       String
+  patient_id      String
+  isActivePatient Boolean @default(true)
+
+  gender           Gender
+  age              Int
+  height           Float // in cm
+  weight           Float // in kg
+  dietaryHabit     DietaryHabits    @default(VEGETARIAN)
+  mealFrequency    Int              @default(3)
+  waterIntake      Float            @default(2) // in liters
+  digestionQuality DigestionQuality @default(AVERAGE)
+  bowelMovement    BowelMovement    @default(REGULAR)
+  PatientDosha     PatientDosha[]
+  priority         Priority         @default(medium)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  lastConsultation DateTime?
+  nextConsultation DateTime?
+
+  doctor     Doctor       @relation(fields: [doctor_id], references: [id])
+  patient    Patient      @relation(fields: [patient_id], references: [id])
+  ChcPatient ChcPatient[]
+  DietChart  DietChart[]
+
+  @@unique([doctor_id, patient_id])
+}
+
+model CriticalHealthCondition {
+  chc_id      String       @id @default(cuid())
+  name        String       @unique
+  description String?
+  ChcPatient  ChcPatient[]
+}
+
+model ChcPatient {
+  chc_id    String
+  dp_id     String
+  diagnosed DateTime
+  resolved  DateTime?
+
+  criticalHealthCondition CriticalHealthCondition @relation(fields: [chc_id], references: [chc_id])
+  doctorPatient           DoctorPatient           @relation(fields: [dp_id], references: [dp_id])
+
+  @@id([chc_id, dp_id])
+}
+
+model Cuisine {
+  cuisine_id String @id @default(cuid())
+  name       String
+
+  Recipe Recipe[]
+}
+
+enum Category {
+  FRUIT
+  VEGETABLE
+  GRAIN
+  LEGUME
+  NUT
+  SEED
+  DAIRY
+  MEAT
+  FISH
+  EGG
+  SPICE
+  HERB
+  BEVERAGE
+  SWEETENER
+  OIL
+}
+
+model Food {
+  food_id           String              @id @default(cuid())
+  name              String
+  hindi_name        String?
+  category          Category            @default(VEGETABLE)
+  FoodNutrient      FoodNutrient[]
+  FoodRasa          FoodRasa[]
+  FoodGuna          FoodGuna[]
+  FoodDosha         FoodDosha[]
+  FoodVirya         FoodVirya[]
+  FoodVipaka        FoodVipaka[]
+  FoodDigestibility FoodDigestibility[]
+  RecipeIngredient  RecipeIngredient[]
+  DietChartRecipe   DietChartRecipe[]
+}
+
+model Nutrient {
+  nutrient_id  String         @id @default(cuid())
+  name         String
+  unit         String
+  FoodNutrient FoodNutrient[]
+  Rda          Rda[]
+}
+
+model Rasa {
+  rasa_id  String     @id @default(cuid())
+  name     String     @unique
+  FoodRasa FoodRasa[]
+}
+
+model Guna {
+  guna_id  String     @id @default(cuid())
+  name     String     @unique
+  FoodGuna FoodGuna[]
+}
+
+model Dosha {
+  dosha_id     String         @id @default(cuid())
+  name         String         @unique
+  FoodDosha    FoodDosha[]
+  PatientDosha PatientDosha[]
+}
+
+model Virya {
+  virya_id  String      @id @default(cuid())
+  name      String      @unique
+  FoodVirya FoodVirya[]
+}
+
+model Vipaka {
+  vipaka_id  String       @id @default(cuid())
+  name       String       @unique
+  FoodVipaka FoodVipaka[]
+}
+
+model Digestibility {
+  digestibility_id  String              @id @default(cuid())
+  name              String              @unique
+  FoodDigestibility FoodDigestibility[]
+}
+
+model Rda {
+  rda_id      String   @id @default(cuid())
+  nutrient_id String
+  age_group   AgeGroup
+  Nutrient    Nutrient @relation(fields: [nutrient_id], references: [nutrient_id])
+  gender      Gender
+  amount      Float
+}
+
+model FoodNutrient {
+  food_id     String
+  nutrient_id String
+  amount      Float
+
+  food     Food     @relation(fields: [food_id], references: [food_id])
+  nutrient Nutrient @relation(fields: [nutrient_id], references: [nutrient_id])
+
+  @@id([food_id, nutrient_id])
+}
+
+model FoodRasa {
+  food_id String
+  rasa_id String
+
+  food Food @relation(fields: [food_id], references: [food_id])
+  rasa Rasa @relation(fields: [rasa_id], references: [rasa_id])
+
+  @@id([food_id, rasa_id])
+}
+
+model FoodGuna {
+  food_id String
+  guna_id String
+
+  food Food @relation(fields: [food_id], references: [food_id])
+  guna Guna @relation(fields: [guna_id], references: [guna_id])
+
+  @@id([food_id, guna_id])
+}
+
+model FoodDosha {
+  food_id  String
+  dosha_id String
+
+  food  Food  @relation(fields: [food_id], references: [food_id])
+  dosha Dosha @relation(fields: [dosha_id], references: [dosha_id])
+
+  @@id([food_id, dosha_id])
+}
+
+model PatientDosha {
+  pd_id    String
+  dosha_id String
+
+  dosha         Dosha         @relation(fields: [dosha_id], references: [dosha_id])
+  doctorPatient DoctorPatient @relation(fields: [pd_id], references: [dp_id])
+
+  @@id([pd_id, dosha_id])
+}
+
+model FoodVirya {
+  food_id  String
+  virya_id String
+
+  food  Food  @relation(fields: [food_id], references: [food_id])
+  virya Virya @relation(fields: [virya_id], references: [virya_id])
+
+  @@id([food_id, virya_id])
+}
+
+model FoodVipaka {
+  food_id   String @id
+  vipaka_id String
+
+  food   Food   @relation(fields: [food_id], references: [food_id])
+  vipaka Vipaka @relation(fields: [vipaka_id], references: [vipaka_id])
+}
+
+model FoodDigestibility {
+  food_id          String @id
+  digestibility_id String
+
+  food          Food          @relation(fields: [food_id], references: [food_id])
+  digestibility Digestibility @relation(fields: [digestibility_id], references: [digestibility_id])
+}
+
+// recommended daily allowance
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum AgeGroup {
+  INFANT // 0-1 years
+  CHILD // 1-12 years
+  ADOLESCENT // 12-18 years
+  ADULT // 18-65 years
+  SENIOR // 65+ years
+}
+
+model Recipe {
+  recipe_id        String             @id @default(cuid())
+  name             String
+  cuisine_id       String
+  Cuisine          Cuisine            @relation(fields: [cuisine_id], references: [cuisine_id])
+  RecipeIngredient RecipeIngredient[]
+  DietChartRecipe  DietChartRecipe[]
+}
+
+model RecipeIngredient {
+  recipe_id String
+  food_id   String
+  quantity  Float // in grams/ml 
+
+  recipe Recipe @relation(fields: [recipe_id], references: [recipe_id])
+  food   Food   @relation(fields: [food_id], references: [food_id])
+
+  @@id([recipe_id, food_id])
+}
+
+model DietChart {
+  chart_id        String            @id @default(cuid())
+  db_id           String
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  mealSlots       MealTime[]
+  doctorPatient   DoctorPatient     @relation(fields: [db_id], references: [dp_id])
+  DietChartRecipe DietChartRecipe[]
+}
+
+enum MealTime {
+  BREAKFAST
+  LUNCH
+  SNACKS
+  DINNER
+}
+
+model DietChartRecipe {
+  chart_id  String
+  recipe_id String
+  mealTime  MealTime
+  WeekDay   Int // 0 - Sunday, 6 - Saturday
+  food_id   String?
+  quantity  Float? // in grams/ml
+  dietChart DietChart @relation(fields: [chart_id], references: [chart_id])
+  recipe    Recipe    @relation(fields: [recipe_id], references: [recipe_id])
+  food      Food?     @relation(fields: [food_id], references: [food_id])
+
+  @@id([chart_id, recipe_id, WeekDay])
+}

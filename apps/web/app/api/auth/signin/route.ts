@@ -6,7 +6,9 @@ import bcrypt from "bcrypt";
 
 export async function POST(req: NextRequest) {
     try {
+
         const body = await req.json();
+
 
         const result = loginSchema.safeParse(body);
         if (!result.success) {
@@ -23,10 +25,13 @@ export async function POST(req: NextRequest) {
         }
 
         if (existingDoc) {
+
             const isValid = await bcrypt.compare(password, existingDoc.password);
             if (!isValid) {
                 return NextResponse.json({ error: "Invalid password" }, { status: 401 });
             }
+
+     
 
             const token = jwt.sign(
                 {
@@ -38,6 +43,8 @@ export async function POST(req: NextRequest) {
                 process.env.JWT_SECRET!
             );
 
+      
+
             return NextResponse.json(
                 {
                     message: "Login successful",
@@ -47,6 +54,7 @@ export async function POST(req: NextRequest) {
                     status: 200,
                 }
             );
+
         }
 
         if (existingPatient) {
@@ -75,6 +83,8 @@ export async function POST(req: NextRequest) {
                 }
             );
         }
+        console.log(6);
+        
         return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
     } catch (error) {
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

@@ -1,14 +1,22 @@
 import OpenAI from "openai";
 import { NextResponse } from "next/server";
 
-const openai = new OpenAI({
-  baseURL: "https://openrouter.ai/api/v1",
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export async function POST(request: Request) {
   try {
     const { message } = await request.json();
+
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: "Missing OPENAI_API_KEY. Set it in your environment or .env.local" },
+        { status: 500 }
+      );
+    }
+
+    const openai = new OpenAI({
+      baseURL: "https://openrouter.ai/api/v1",
+      apiKey,
+    });
 
     const systemPrompt = `
         You are "AyurGPT" — a friendly and knowledgeable Ayurvedic assistant.
@@ -22,8 +30,8 @@ export async function POST(request: Request) {
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
-        {role: 'system', content: systemPrompt },   
-        {role: 'user', content: message }
+        { role: "system", content: systemPrompt },
+        { role: "user", content: message },
       ],
     });
 
@@ -32,10 +40,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: aiMessage });
   } catch (error) {
     console.error("Error generating AI response:", error);
-    return NextResponse.json(
-      { error: "Failed to generate AI response." },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to generate AI response." }, { status: 500 });
   }
 }
 

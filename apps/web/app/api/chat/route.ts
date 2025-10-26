@@ -2,6 +2,7 @@ import OpenAI from "openai";
 import { NextResponse } from "next/server";
 
 const openai = new OpenAI({
+  baseURL: "https://openrouter.ai/api/v1",
   apiKey: process.env.OPENAI_API_KEY,
 });
 
@@ -19,14 +20,15 @@ export async function POST(request: Request) {
         `;
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-4o",
       messages: [
         {role: 'system', content: systemPrompt },   
         {role: 'user', content: message }
       ],
     });
 
-    const aiMessage = response.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response.";
+    const aiMessage = response.choices.at(0)?.message?.content || "I'm sorry, I couldn't generate a response.";
+    console.log(aiMessage);
     
     return NextResponse.json({ message: aiMessage });
   } catch (error) {

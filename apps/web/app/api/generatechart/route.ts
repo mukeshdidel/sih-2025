@@ -127,7 +127,7 @@ export async function POST(req: Request) {
     const usedRecipes = new Set<string>();
 
     for (const meal of mealSlots) {
-        const ranked = scored
+     const ranked = scored
         .map((s) => {
             const rdaScore = rdaContributionScore(s.recipeNutrients, dailyTotals, rdaRequirements);
             return { ...s, score: s.baseScore + rdaScore + Math.random() * 0.01 };
@@ -152,7 +152,7 @@ export async function POST(req: Request) {
             WeekDay: day % 7,
             quantity: 200,
         },
-        });
+      });
     }
     }
 

@@ -28,8 +28,7 @@ export async function POST(request: Request) {
     });
 
     const aiMessage = response.choices.at(0)?.message?.content || "I'm sorry, I couldn't generate a response.";
-    console.log(aiMessage);
-    
+
     return NextResponse.json({ message: aiMessage });
   } catch (error) {
     console.error("Error generating AI response:", error);

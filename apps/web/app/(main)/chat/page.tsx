@@ -36,8 +36,7 @@ export default function Page() {
       if (!res.ok) throw new Error("Network error")
       const data = await res.json()
     console.log(data);
-    
-      const botText = typeof data?.message === "string" ? data.reply : "No reply."
+      const botText = typeof data?.message === "string" ? data.message : "No reply."
       const botMsg: Message = { id: String(Date.now() + 1), role: "bot", text: botText }
       setMessages((m) => [...m, botMsg])
     } catch (err) {
@@ -104,7 +103,7 @@ export default function Page() {
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={onKeyDown}
-          placeholder="Type a message — Enter to send, Shift+Enter for newline"
+          placeholder="Type a message"
           rows={2}
           className="flex-1 resize-y min-h-[44px] max-h-36 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-sky-300"
         />
